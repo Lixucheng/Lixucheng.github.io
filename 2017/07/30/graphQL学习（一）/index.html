@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="mysql," />
+  <meta name="keywords" content="JavaScript,GraphQL," />
 
 
 
@@ -93,17 +93,17 @@
 
 
 
-<meta name="description" content="1.安装命令如下 sudo apt-get install mysql-server然后按照提示输入数据库密码即可  2.启动mysql命令 service mysql start这时系统会提示输入密码，正确输入后没有报错就是启动成功了  3.关闭mysql服务 service mysql stop  4.连接数据库 mysql -u root -p这时系统会提示输入密码，正确输入后会进去mysq">
-<meta name="keywords" content="mysql">
+<meta name="description" content="1. 什么是GraphQL？ A query language for your API  官网给他的定义是一门API的查询语言。他会给你API中的数据一份完整的描述，这样客户端就可以根据这份描述来确定他具体需要什么。下面总结一下他的特点：  根据需要查询数据。客户端可以发送一个GraphQL到服务端API，只获取客户端想要的数据。查询总是会返回预测的结果，说白了就是你想要什么就会拿到什么（前提是">
+<meta name="keywords" content="JavaScript,GraphQL">
 <meta property="og:type" content="article">
-<meta property="og:title" content="linux下mysql的安装与简单操作">
-<meta property="og:url" content="http://yoursite.com/2016/06/01/linux下mysql的安装与简单操作/index.html">
+<meta property="og:title" content="graphQL学习（一）">
+<meta property="og:url" content="http://yoursite.com/2017/07/30/graphQL学习（一）/index.html">
 <meta property="og:site_name" content="李续铖的博客">
-<meta property="og:description" content="1.安装命令如下 sudo apt-get install mysql-server然后按照提示输入数据库密码即可  2.启动mysql命令 service mysql start这时系统会提示输入密码，正确输入后没有报错就是启动成功了  3.关闭mysql服务 service mysql stop  4.连接数据库 mysql -u root -p这时系统会提示输入密码，正确输入后会进去mysq">
-<meta property="og:updated_time" content="2017-06-05T06:25:44.000Z">
+<meta property="og:description" content="1. 什么是GraphQL？ A query language for your API  官网给他的定义是一门API的查询语言。他会给你API中的数据一份完整的描述，这样客户端就可以根据这份描述来确定他具体需要什么。下面总结一下他的特点：  根据需要查询数据。客户端可以发送一个GraphQL到服务端API，只获取客户端想要的数据。查询总是会返回预测的结果，说白了就是你想要什么就会拿到什么（前提是">
+<meta property="og:updated_time" content="2017-07-30T15:47:46.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="linux下mysql的安装与简单操作">
-<meta name="twitter:description" content="1.安装命令如下 sudo apt-get install mysql-server然后按照提示输入数据库密码即可  2.启动mysql命令 service mysql start这时系统会提示输入密码，正确输入后没有报错就是启动成功了  3.关闭mysql服务 service mysql stop  4.连接数据库 mysql -u root -p这时系统会提示输入密码，正确输入后会进去mysq">
+<meta name="twitter:title" content="graphQL学习（一）">
+<meta name="twitter:description" content="1. 什么是GraphQL？ A query language for your API  官网给他的定义是一门API的查询语言。他会给你API中的数据一份完整的描述，这样客户端就可以根据这份描述来确定他具体需要什么。下面总结一下他的特点：  根据需要查询数据。客户端可以发送一个GraphQL到服务端API，只获取客户端想要的数据。查询总是会返回预测的结果，说白了就是你想要什么就会拿到什么（前提是">
 
 
 
@@ -131,7 +131,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2016/06/01/linux下mysql的安装与简单操作/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/07/30/graphQL学习（一）/"/>
 
 
 
@@ -144,7 +144,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager -->
 
 
-  <title>linux下mysql的安装与简单操作 | 李续铖的博客</title>
+  <title>graphQL学习（一） | 李续铖的博客</title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -297,7 +297,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/06/01/linux下mysql的安装与简单操作/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/30/graphQL学习（一）/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="李续铖">
@@ -314,7 +314,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         
         
-          <h1 class="post-title" itemprop="name headline">linux下mysql的安装与简单操作</h1>
+          <h1 class="post-title" itemprop="name headline">graphQL学习（一）</h1>
         
 
         <div class="post-meta">
@@ -326,8 +326,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-06-01T00:00:00+08:00">
-                2016-06-01
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-30T00:00:00+08:00">
+                2017-07-30
               </time>
             
 
@@ -383,27 +383,37 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       
 
       
-        <h3 id="1-安装命令如下"><a href="#1-安装命令如下" class="headerlink" title="1.安装命令如下"></a>1.安装命令如下</h3><blockquote>
-<p>sudo apt-get install mysql-server<br>然后按照提示输入数据库密码即可</p>
+        <h2 id="1-什么是GraphQL？"><a href="#1-什么是GraphQL？" class="headerlink" title="1. 什么是GraphQL？"></a>1. 什么是GraphQL？</h2><blockquote>
+<p>A query language for your API</p>
 </blockquote>
-<h3 id="2-启动mysql命令"><a href="#2-启动mysql命令" class="headerlink" title="2.启动mysql命令"></a>2.启动mysql命令</h3><blockquote>
-<p>service mysql start<br>这时系统会提示输入密码，正确输入后没有报错就是启动成功了</p>
-</blockquote>
-<h3 id="3-关闭mysql服务"><a href="#3-关闭mysql服务" class="headerlink" title="3.关闭mysql服务"></a>3.关闭mysql服务</h3><blockquote>
-<p>service mysql stop</p>
-</blockquote>
-<h3 id="4-连接数据库"><a href="#4-连接数据库" class="headerlink" title="4.连接数据库"></a>4.连接数据库</h3><blockquote>
-<p>mysql -u root -p<br>这时系统会提示输入密码，正确输入后会进去mysql命令行下</p>
-</blockquote>
-<h3 id="5-查看数据库"><a href="#5-查看数据库" class="headerlink" title="5.查看数据库"></a>5.查看数据库</h3><blockquote>
-<p>show databases;<br>需要注意的是mysql命令后面一定要加分号，否则不会运行</p>
-</blockquote>
-<h3 id="6-创建数据库"><a href="#6-创建数据库" class="headerlink" title="6.创建数据库"></a>6.创建数据库</h3><blockquote>
-<p>create database name;</p>
-</blockquote>
-<h3 id="7-创建表"><a href="#7-创建表" class="headerlink" title="7.创建表"></a>7.创建表</h3><blockquote>
-<p>create table user(id int(3) auto_increment not null primary key, name char(8));</p>
-</blockquote>
+<p>官网给他的定义是一门API的查询语言。他会给你API中的数据一份完整的描述，这样客户端就可以根据这份描述来确定他具体需要什么。下面总结一下他的特点：</p>
+<ol>
+<li><strong>根据需要查询数据</strong>。客户端可以发送一个GraphQL到服务端API，只获取客户端想要的数据。查询总是会返回预测的结果，说白了就是你想要什么就会拿到什么（前提是API有想要的数据）。</li>
+<li><strong>在一份请求中获取多种数据</strong>。GraphQL不只是会访问某一种资源，还可以访问数据之间的引用，即使这些数据后端需要从多个URL加载，这个速度也是非常快的。</li>
+<li><strong>使用类型系统描述什么是可以获取的</strong>。GraphQL API根据类型和字段进行组织。使用类型来确保客户端只会获取肯能的内容，并且会提供很明确的错误反馈。避免了服务端手动对请求数据进行解析。</li>
+<li><strong>强大的开发工具</strong>。这个也是我非常喜欢的一点，可以很直观的知道可以从服务端获取哪些数据，数据结构是怎样的，并且还会有每个字段的描述，简直比开发文档还要方便。</li>
+</ol>
+<hr>
+<p>既然他是一个这么好的东西，现在都有谁在用呢，靠谱么？</p>
+<p>由于它是由Facebook提出的，所以从2012年开始Facebook的移动应用就已经开始使用GrqphQL了。而且现在Github的API v4也已经使用了GraphQL。目前该项已经技术比较成熟，可以在项目中进行使用了。</p>
+<h2 id="2-项目搭建"><a href="#2-项目搭建" class="headerlink" title="2. 项目搭建"></a>2. 项目搭建</h2><p>本项目的目的是搭建一个由GraphQL建立的服务端，并且提供查询工具。</p>
+<h3 id="2-1-技术选择"><a href="#2-1-技术选择" class="headerlink" title="2.1 技术选择"></a>2.1 技术选择</h3><p>主要的就下面几个</p>
+<p><code>Koa</code> <code>GraphQL</code> <code>TypeScript</code> <code>GraphiQL</code>  </p>
+<p>还有几个工具库</p>
+<p><code>graphql-relay</code> <code>koa-graphiql</code> <code>koa-graphql</code> <code>superagent</code> </p>
+<h3 id="2-2-搭建"><a href="#2-2-搭建" class="headerlink" title="2.2 搭建"></a>2.2 搭建</h3><p>服务端基础搭建就不做介绍了，就是使用koa + TypeScript搭建了一个简单的服务器。<br>由于GeaphQL是基于类型和字段的，那么先对数据进行类型定义吧。</p>
+<p>先简单的来一个<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">user.ts</div><div class="line"></div><div class="line">const GQUser = new GraphQLObjectType(&#123;</div><div class="line">  name: &apos;GQUser&apos;,</div><div class="line">  fields: &#123;</div><div class="line">    name: &#123;</div><div class="line">      type: GraphQLString,</div><div class="line">      resolve(user) &#123;</div><div class="line">        return user.name;</div><div class="line">      &#125;,</div><div class="line">    &#125;,</div><div class="line">    age: &#123;</div><div class="line">      type: GraphQLInt,</div><div class="line">      resolve() &#123;</div><div class="line">        return 22</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>在这里name就是定义的类型名字，fields就是他所具备的字段，当然每个字段也有自己的类型，resolve函数反回的是这个字段最终的值。它的参数来自使用它的类型的resolve返回，具体下面介绍。</p>
+<p>类型定义完成后就可以使用这个类型了，<br>首先定义查询入口</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">schema.ts</div><div class="line"></div><div class="line">class User &#123;</div><div class="line">  public name: string;</div><div class="line">  public age: number;</div><div class="line">  constructor() &#123;</div><div class="line">      this.name = &apos;lxc&apos;;</div><div class="line">      this.age = 22;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">const Query = new GraphQLObjectType(&#123;</div><div class="line">  name: &apos;Query&apos;,</div><div class="line">  fields: () =&gt; (&#123;</div><div class="line">    user: &#123;</div><div class="line">      type: GQUser,</div><div class="line">      description: &apos;用户&apos;,</div><div class="line">      resolve: async () =&gt; &#123;</div><div class="line">        return new User();</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;)</div><div class="line">&#125;);</div><div class="line"></div><div class="line">export default new GraphQLSchema(&#123;</div><div class="line">  query: Query,</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>发现这里也有一个类型：query，这是每个GraphQL都会有的一个类型，他和其他类型没有什么区别，唯一特殊的是它是程序查询的入口。<br>我在这里给query类型添加了一个叫user的字段,它的类型是我们上面定义的GQUser，同时他的resolve函数返回了一个User对象，那么这个返回的对象就会传给GQUser的的resolve函数。</p>
+<p>下面就是建立GraphQL服务了，由于使用了<code>koa-graphql</code> ，这个过程非常简单</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">const graphqlHTTP = require(&apos;koa-graphql&apos;);</div><div class="line"></div><div class="line">router.all(&apos;/graphql&apos;, graphqlHTTP(&#123;</div><div class="line">  schema,</div><div class="line">  graphiql: true,</div><div class="line">&#125;));</div></pre></td></tr></table></figure>
+<p>这样就搭建了一个GraphQL的服务，同时为了方便用户查询数据结构和描述，这里使用了<code>GraphiQL</code>开发工具。</p>
+<h3 id="2-3-查询"><a href="#2-3-查询" class="headerlink" title="2.3 查询"></a>2.3 查询</h3><p>查询数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">query&#123;</div><div class="line">  user &#123;</div><div class="line">    name</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>获得结果是</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;data&quot;: &#123;</div><div class="line">    &quot;user&quot;: &#123;</div><div class="line">      &quot;name&quot;: &quot;lxc&quot;,</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里就会发现，我在这里只希望拿到user的name属性，服务端返回的也是只有name属性，并没有多返回什么东西。我想要拿什么就可以在查询语句中改什么，并不需要对服务端的代码进行任何的改动，无形中降低了很多开发量，减少了很多沟通，提高了开发的速度和效率。</p>
 
       
     </div>
@@ -433,7 +443,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       
         <div class="post-tags">
           
-            <a href="/tags/mysql/" rel="tag"># mysql</a>
+            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          
+            <a href="/tags/GraphQL/" rel="tag"># GraphQL</a>
           
         </div>
       
@@ -446,8 +458,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/05/10/超文本编辑器simditor简单应用/" rel="next" title="超文本编辑器simditor简单应用">
-                <i class="fa fa-chevron-left"></i> 超文本编辑器simditor简单应用
+              <a href="/2016/07/17/React Native 界面跳转/" rel="next" title="React Native 界面跳转">
+                <i class="fa fa-chevron-left"></i> React Native 界面跳转
               </a>
             
           </div>
@@ -456,8 +468,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2016/07/15/React+Redux 单界面应用/" rel="prev" title="React+Redux 单界面应用">
-                React+Redux 单界面应用 <i class="fa fa-chevron-right"></i>
+              <a href="/2017/07/30/graphQL学习（二）/" rel="prev" title="graphQL学习（二）">
+                graphQL学习（二） <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -624,7 +636,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-安装命令如下"><span class="nav-number">1.</span> <span class="nav-text">1.安装命令如下</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-启动mysql命令"><span class="nav-number">2.</span> <span class="nav-text">2.启动mysql命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-关闭mysql服务"><span class="nav-number">3.</span> <span class="nav-text">3.关闭mysql服务</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-连接数据库"><span class="nav-number">4.</span> <span class="nav-text">4.连接数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-查看数据库"><span class="nav-number">5.</span> <span class="nav-text">5.查看数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-创建数据库"><span class="nav-number">6.</span> <span class="nav-text">6.创建数据库</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-创建表"><span class="nav-number">7.</span> <span class="nav-text">7.创建表</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-什么是GraphQL？"><span class="nav-number">1.</span> <span class="nav-text">1. 什么是GraphQL？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-项目搭建"><span class="nav-number">2.</span> <span class="nav-text">2. 项目搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-技术选择"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 技术选择</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-搭建"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-查询"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 查询</span></a></li></ol></li></ol></div>
             
 
           </div>
