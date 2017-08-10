@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="JavaScript,GraphQL," />
+  <meta name="keywords" content="mongoDB," />
 
 
 
@@ -93,17 +93,17 @@
 
 
 
-<meta name="description" content="前面介绍了如何搭建一个简单的GrqphQl服务，那么下面说一些其他的，这次的数据并不会直接拿到，而是需要服务端再去获取，更符合实际情况。  1. 类型定义12345678910111213141516const GQPoi = new GraphQLObjectType(&amp;#123;  name: &amp;apos;poi&amp;apos;,  fields: &amp;#123;    id: &amp;#123;">
-<meta name="keywords" content="JavaScript,GraphQL">
+<meta name="description" content="1 安装12345// 先更新brew$ /usr/bin/ruby -e &amp;quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&amp;quot;// 安装mongodb$ brew install mongodb 等待安装成功1234To have launchd start mong">
+<meta name="keywords" content="mongoDB">
 <meta property="og:type" content="article">
-<meta property="og:title" content="graphQL学习（二）">
-<meta property="og:url" content="http://yoursite.com/2017/07/30/graphQL学习（二）/index.html">
+<meta property="og:title" content="mongoDB的安装与使用">
+<meta property="og:url" content="http://yoursite.com/2017/03/21/mongoDB的安装与使用/index.html">
 <meta property="og:site_name" content="李续铖的博客">
-<meta property="og:description" content="前面介绍了如何搭建一个简单的GrqphQl服务，那么下面说一些其他的，这次的数据并不会直接拿到，而是需要服务端再去获取，更符合实际情况。  1. 类型定义12345678910111213141516const GQPoi = new GraphQLObjectType(&amp;#123;  name: &amp;apos;poi&amp;apos;,  fields: &amp;#123;    id: &amp;#123;">
-<meta property="og:updated_time" content="2017-07-30T15:48:38.000Z">
+<meta property="og:description" content="1 安装12345// 先更新brew$ /usr/bin/ruby -e &amp;quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&amp;quot;// 安装mongodb$ brew install mongodb 等待安装成功1234To have launchd start mong">
+<meta property="og:updated_time" content="2017-08-10T08:15:20.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="graphQL学习（二）">
-<meta name="twitter:description" content="前面介绍了如何搭建一个简单的GrqphQl服务，那么下面说一些其他的，这次的数据并不会直接拿到，而是需要服务端再去获取，更符合实际情况。  1. 类型定义12345678910111213141516const GQPoi = new GraphQLObjectType(&amp;#123;  name: &amp;apos;poi&amp;apos;,  fields: &amp;#123;    id: &amp;#123;">
+<meta name="twitter:title" content="mongoDB的安装与使用">
+<meta name="twitter:description" content="1 安装12345// 先更新brew$ /usr/bin/ruby -e &amp;quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&amp;quot;// 安装mongodb$ brew install mongodb 等待安装成功1234To have launchd start mong">
 
 
 
@@ -131,7 +131,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/07/30/graphQL学习（二）/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/03/21/mongoDB的安装与使用/"/>
 
 
 
@@ -144,7 +144,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager -->
 
 
-  <title>graphQL学习（二） | 李续铖的博客</title>
+  <title>mongoDB的安装与使用 | 李续铖的博客</title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -297,7 +297,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/30/graphQL学习（二）/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/21/mongoDB的安装与使用/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="李续铖">
@@ -314,7 +314,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         
         
-          <h1 class="post-title" itemprop="name headline">graphQL学习（二）</h1>
+          <h1 class="post-title" itemprop="name headline">mongoDB的安装与使用</h1>
         
 
         <div class="post-meta">
@@ -326,8 +326,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-30T00:00:00+08:00">
-                2017-07-30
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-21T00:00:00+08:00">
+                2017-03-21
               </time>
             
 
@@ -383,17 +383,13 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       
 
       
-        <blockquote>
-<p>前面介绍了如何搭建一个简单的GrqphQl服务，那么下面说一些其他的，这次的数据并不会直接拿到，而是需要服务端再去获取，更符合实际情况。</p>
-</blockquote>
-<h2 id="1-类型定义"><a href="#1-类型定义" class="headerlink" title="1. 类型定义"></a>1. 类型定义</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">const GQPoi = new GraphQLObjectType(&#123;</div><div class="line">  name: &apos;poi&apos;,</div><div class="line">  fields: &#123;</div><div class="line">    id: &#123;</div><div class="line">      type: GraphQLInt,</div><div class="line">      resolve: e =&gt; e.id</div><div class="line">    &#125;,</div><div class="line">    poiName: &#123;</div><div class="line">      type: GraphQLString,</div><div class="line">      resolve: e =&gt; e.pointName</div><div class="line">    &#125;,</div><div class="line">    address: &#123;</div><div class="line">      type: GraphQLString</div><div class="line">    &#125;</div><div class="line">  &#125;,</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<h2 id="2-设置查询入口"><a href="#2-设置查询入口" class="headerlink" title="2. 设置查询入口"></a>2. 设置查询入口</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">const Query = new GraphQLObjectType(&#123;</div><div class="line">  name: &apos;Query&apos;,</div><div class="line">  fields: () =&gt; (&#123;</div><div class="line">    pois: &#123;</div><div class="line">      type: new GraphQLList(GQPoi),</div><div class="line">      description: &apos;店铺列表&apos;,</div><div class="line">      resolve: async () =&gt; &#123;</div><div class="line">        return await getPois();</div><div class="line">      &#125;</div><div class="line">    &#125;,</div><div class="line">    poi: &#123;</div><div class="line">      type: GQPoi,</div><div class="line">      description: &apos;店铺查询&apos;,</div><div class="line">      args: &#123;</div><div class="line">        id: &#123;</div><div class="line">          type: GraphQLInt</div><div class="line">        &#125;</div><div class="line">      &#125;,</div><div class="line">      resolve: async (source, args, ctx, info) =&gt; &#123;</div><div class="line">        console.log(args);</div><div class="line">        const id = args.id;</div><div class="line">        const pois = await getPois();</div><div class="line">        const poi = pois.filter(e =&gt; e.id === id );</div><div class="line">        return poi[0];</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;)</div><div class="line">&#125;);</div><div class="line"></div><div class="line">export default new GraphQLSchema(&#123;</div><div class="line">  query: Query,</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<p>在Query中添加了两个字段，pois是用来获取店铺列表，poi是用来查询某一个门店的信息，和之前不一样的是门店列表需要异步获取。poi还需要一个查询的id参数。</p>
-<h2 id="3-查询"><a href="#3-查询" class="headerlink" title="3. 查询"></a>3. 查询</h2><p>先来个简单的查询<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">query&#123;</div><div class="line">  pois &#123;</div><div class="line">    id </div><div class="line">    poiName</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>下面使用poi来查询某一个门店的信息</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">query&#123;</div><div class="line">  poi(id: 111) &#123;</div><div class="line">    poiName</div><div class="line">    poiId</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>获取到的结果是<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;data&quot;: &#123;</div><div class="line">    &quot;poi&quot;: &#123;</div><div class="line">      &quot;poiName&quot;: &quot;肯德基&quot;,</div><div class="line">      &quot;id&quot;: 111</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>可以发现GraphQL的查询是非常灵活的</p>
+        <h2 id="1-安装"><a href="#1-安装" class="headerlink" title="1 安装"></a>1 安装</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">// 先更新brew</div><div class="line">$ /usr/bin/ruby -e &quot;$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)&quot;</div><div class="line"></div><div class="line">// 安装mongodb</div><div class="line">$ brew install mongodb</div></pre></td></tr></table></figure>
+<p>等待安装成功<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">To have launchd start mongodb now and restart at login:</div><div class="line">  brew services start mongodb</div><div class="line">Or, if you don&apos;t want/need a background service you can just run:</div><div class="line">  mongod --config /usr/local/etc/mongod.conf</div></pre></td></tr></table></figure></p>
+<p>根据提示启动服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ brew services start mongodb</div></pre></td></tr></table></figure>
+<h2 id="2-使用"><a href="#2-使用" class="headerlink" title="2 使用"></a>2 使用</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">$ mongo</div><div class="line">&gt; db.test.insert(&#123;name: &apos;lxc&apos;&#125;)</div><div class="line">WriteResult(&#123; &quot;nInserted&quot; : 1 &#125;)</div><div class="line">&gt; db.test.find()</div><div class="line">&#123; &quot;_id&quot; : ObjectId(&quot;58d0c768a060bd0547d979a3&quot;), &quot;name&quot; : &quot;lxc&quot; &#125;</div><div class="line">&gt;</div></pre></td></tr></table></figure>
+<p>创建数据库<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">&gt; show dbs</div><div class="line">admin  0.000GB</div><div class="line">local  0.000GB</div><div class="line">&gt; use test</div><div class="line">switched to db test</div><div class="line">// 这时候并不会显示test，要插入一条数据才可以</div><div class="line">&gt; show dbs</div><div class="line">admin  0.000GB</div><div class="line">local  0.000GB</div><div class="line">&gt; db.test.insert(&#123;name: &apos;lxc&apos;&#125;)</div><div class="line">WriteResult(&#123; &quot;nInserted&quot; : 1 &#125;)</div><div class="line">&gt; show dbs</div><div class="line">admin  0.000GB</div><div class="line">local  0.000GB</div><div class="line">test   0.000GB</div><div class="line">&gt;</div></pre></td></tr></table></figure></p>
+<p>删除数据库<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&gt; db</div><div class="line">test</div><div class="line">&gt; db.dropDatabase();</div><div class="line">&#123; &quot;dropped&quot; : &quot;test&quot;, &quot;ok&quot; : 1 &#125;</div><div class="line">&gt; show dbs</div><div class="line">admin  0.000GB</div><div class="line">local  0.000GB</div><div class="line">&gt;</div></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -423,9 +419,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       
         <div class="post-tags">
           
-            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
-          
-            <a href="/tags/GraphQL/" rel="tag"># GraphQL</a>
+            <a href="/tags/mongoDB/" rel="tag"># mongoDB</a>
           
         </div>
       
@@ -438,8 +432,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/07/30/graphQL学习（一）/" rel="next" title="graphQL学习（一）">
-                <i class="fa fa-chevron-left"></i> graphQL学习（一）
+              <a href="/2016/07/29/async／await介绍/" rel="next" title="async／await介绍">
+                <i class="fa fa-chevron-left"></i> async／await介绍
               </a>
             
           </div>
@@ -447,6 +441,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/18/Docker 命令记录/" rel="prev" title="Docker 命令记录">
+                Docker 命令记录 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -526,7 +524,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">20</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -537,7 +535,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">4</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -548,7 +546,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -612,7 +610,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-类型定义"><span class="nav-number">1.</span> <span class="nav-text">1. 类型定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-设置查询入口"><span class="nav-number">2.</span> <span class="nav-text">2. 设置查询入口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-查询"><span class="nav-number">3.</span> <span class="nav-text">3. 查询</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-安装"><span class="nav-number">1.</span> <span class="nav-text">1 安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-使用"><span class="nav-number">2.</span> <span class="nav-text">2 使用</span></a></li></ol></div>
             
 
           </div>

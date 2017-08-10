@@ -294,6 +294,1123 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/07/15/React+Redux 单界面应用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="李续铖">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/lxchead.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李续铖的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2016/07/15/React+Redux 单界面应用/" itemprop="url">React+Redux 单界面应用</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-07-15T00:00:00+08:00">
+                2016-07-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/前端/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>之前的项目需要做一个后端管理的web，既然要做，就挑战一下自己吧，打算使用react+redux 做一个单界面的应用。为什么要用这个组合去做呢，React我就不解释了，这是最近非常火的一个前端框架，但是他还是有一些缺点的，比如他在各组件之间的数据交互相对来说比较麻烦，而Redux的作用就是用来管理数据流，管理状态，所以选择用React和Redux结合起来做。</p>
+<p>这里还要使用一些其他的框架，使用 <strong>react-redux</strong> 去连接React和Redux；使用 <strong>react-router</strong> 和 <strong>react-router-redux</strong> 去做前端路由；使用 <strong>redux-thunk</strong> 去支持异步action等。</p>
+</blockquote>
+<p>下面了解一下Redux的数据流（按顺序进行）：</p>
+<p>首先触发action：action 可以理解为应用向 store 传递的数据信息（一般为用户交互信息）。在实际应用中，传递的信息可以约定一个固定的数据格式，简单形式如下<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">getCourse</span>(<span class="params">data</span>) </span>&#123;</div><div class="line">    <span class="keyword">return</span> &#123;<span class="attr">type</span>: <span class="string">'Get_Courses'</span>, data&#125;;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>dispatch(action)：这是一个同步的过程：执行 reducer 更新 state -&gt; 调用 store 的监听处理函数。如果需要在 dispatch 时执行一些异步操作可以通过引入 Middleware（<strong>redux-thunk</strong>） 解决。</p>
+<p>最后reducer 改变状态：reducer的作用就是根据现在的state和action来得到新的state，也就是说这有在这一步state树才会被改变。</p>
+<p>下面结合我的代码去说明：（这里以获取课程信息为例）</p>
+<p>首先是前端目录结构：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">admin/  </div><div class="line">├── actions/ 用于存放action文件  </div><div class="line">│   └── course.js  </div><div class="line">├── components/ 能够复用的React组件   </div><div class="line">├── containers/ 界面   </div><div class="line">|   └── course.js  </div><div class="line">├── reducers/ 存放reducers处理文件</div><div class="line">|   └── course.js  </div><div class="line">├── store/ 将reducer整合在一起</div><div class="line">|   └── rootStore.js  </div><div class="line">└── index.js 入口文件</div></pre></td></tr></table></figure>
+<hr>
+
+<p>action/course.js:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">function getCourse(data) &#123;</div><div class="line">    return &#123;type: &apos;Get_Courses&apos;, data&#125;;</div><div class="line">&#125;</div><div class="line">export function getCoursesAction(data) &#123;</div><div class="line">    return dispatch=&gt; &#123;</div><div class="line">        fetch(`/admin/course/list?search=$&#123;data.search&#125;&amp;page=$&#123;data.             page&#125;`, &#123;credentials: &apos;include&apos;&#125;)</div><div class="line">            .then((response) =&gt; response.text())</div><div class="line">            .then((responseText) =&gt; &#123;</div><div class="line">                var data = JSON.parse(responseText);</div><div class="line">                data.data = JSON.parse(data.data)</div><div class="line">                dispatch(getCourse(data))</div><div class="line">            &#125;)</div><div class="line">            .catch((error) =&gt; &#123;</div><div class="line">                console.warn(error);</div><div class="line">            &#125;);</div><div class="line"></div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>因为action函数是不支持异步的，所以这里将异步操作放到getCoursesAction函数里面，当异步获取成功数据之后通过dispacth调用getCourse函数将数据提交给reducer处理。</p>
+<hr>
+
+<p>reducers/course.js:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">var defaultFields = &#123;</div><div class="line">    data: [],</div><div class="line">    total:0,</div><div class="line">    page:1,</div><div class="line">    count:10,</div><div class="line">    search: &apos;&apos;,</div><div class="line">&#125;;</div><div class="line"></div><div class="line">export function courses(state = defaultFields, action) &#123;</div><div class="line">    switch (action.type) &#123;</div><div class="line">        case &apos;Get_Courses&apos;:</div><div class="line">            return action.data</div><div class="line">        default:</div><div class="line">            return state;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>其实这里的参数action就是我们在action/course.js中返回的数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">return &#123;type: &apos;Get_Courses&apos;, data&#125;;</div></pre></td></tr></table></figure></p>
+<p>所以我们通过action.type获取我们约定的操作，这里我们如果type是“Get_Courses”就会根据action里面的data更新state。</p>
+<hr>
+
+<p>store/rootStore.js:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line">import &#123; createStore, applyMiddleware,compose ,combineReducers&#125; from &apos;redux&apos;;</div><div class="line">import &#123;routerReducer&#125; from &apos;react-router-redux&apos;;</div><div class="line">import thunk from &apos;redux-thunk&apos;;</div><div class="line"></div><div class="line">import * as course from &apos;../reducers/course.js&apos;;</div><div class="line"></div><div class="line">//将拆分的reducer组合起来</div><div class="line">const reducer = combineReducers(&#123;</div><div class="line">    ...course,</div><div class="line">    routing: routerReducer</div><div class="line">&#125;);</div><div class="line"></div><div class="line">//添加中间件</div><div class="line">const createStoreWithMiddleware = compose(</div><div class="line">    applyMiddleware(</div><div class="line">        thunk</div><div class="line">    ),</div><div class="line">    window.devToolsExtension ? window.devToolsExtension() : f =&gt; f</div><div class="line">)(createStore)</div><div class="line"></div><div class="line">//生成store</div><div class="line">export default createStoreWithMiddleware(reducer)</div></pre></td></tr></table></figure>
+<hr>
+
+<p>containers/course.js<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">mport React, &#123; Component &#125; from &apos;react&apos;;</div><div class="line">import &#123; connect &#125; from &apos;react-redux&apos;;</div><div class="line">class Course extends React.Component &#123;</div><div class="line">    ...</div><div class="line">    render() &#123;</div><div class="line">        //获取到courses数据</div><div class="line">        var data = this.props.data;</div><div class="line">        return(...);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">//将store中的course信息绑定到Course组件的props上</div><div class="line">function show(state) &#123;</div><div class="line">    return &#123;</div><div class="line">        data: state.courses,</div><div class="line">        fields:state.fields</div><div class="line">    &#125;;</div><div class="line">&#125;</div><div class="line"></div><div class="line">export default connect(show)(Course);</div></pre></td></tr></table></figure></p>
+<hr>
+
+
+
+<p>index.js:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">import &#123; createStore, applyMiddleware,compose ,combineReducers&#125; from &apos;redux&apos;;</div><div class="line">import &#123; Provider &#125; from &apos;react-redux&apos;;</div><div class="line">import Share from &apos;./components/share.js&apos;;</div><div class="line"></div><div class="line">import User from &apos;./containers/user.js&apos;;</div><div class="line">import Field from &apos;./containers/field.js&apos;;</div><div class="line">import Course from &apos;./containers/course.js&apos;;</div><div class="line">import Section from &apos;./containers/section.js&apos;;</div><div class="line">import Lesson from &apos;./containers/lesson.js&apos;;</div><div class="line"></div><div class="line">import store from &apos;./store/rootStore.js&apos;;</div><div class="line"></div><div class="line">import &#123;routerReducer, syncHistoryWithStore &#125; from &apos;react-router-redux&apos;;</div><div class="line">import &#123; Route, Router ,browserHistory, IndexRoute ,hashHistory  &#125; from &apos;react-router&apos;;</div><div class="line"></div><div class="line">import &#123;createHistory &#125; from &apos;history&apos;</div><div class="line"></div><div class="line">let history = syncHistoryWithStore(hashHistory, store)</div><div class="line">let rootElement = document.getElementById(&apos;contain&apos;);</div><div class="line">ReactDOM.render(</div><div class="line">    &lt;Provider store=&#123;store&#125;&gt;</div><div class="line">        &lt;Router history=&#123;history&#125;&gt;</div><div class="line">            &lt;Route path=&quot;/&quot; component=&#123;Share&#125;&gt;</div><div class="line">                &lt;Route path=&quot;user&quot; component=&#123;User&#125;/&gt;</div><div class="line">                &lt;Route path=&quot;field&quot; component=&#123;Field&#125;/&gt;</div><div class="line">                &lt;Route path=&quot;course&quot; component=&#123;Course&#125;/&gt;</div><div class="line">                &lt;Route path=&quot;section/:id&quot; component=&#123;Section&#125;/&gt;</div><div class="line">                &lt;Route path=&quot;lesson/:id&quot; component=&#123;Lesson&#125;/&gt;</div><div class="line">            &lt;/Route&gt;</div><div class="line">        &lt;/Router&gt;</div><div class="line">    &lt;/Provider&gt;,</div><div class="line">    rootElement</div><div class="line">);</div></pre></td></tr></table></figure></p>
+<p>index.js的作用主要是把所有的东西连在一起，这里使用了<strong>react-router</strong>中的 <strong>syncHistoryWithStore</strong> 函数去做前端路由，这样我的单页面应用就建起来了.</p>
+<p>　　</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/06/01/linux下mysql的安装与简单操作/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="李续铖">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/lxchead.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李续铖的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2016/06/01/linux下mysql的安装与简单操作/" itemprop="url">linux下mysql的安装与简单操作</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-06-01T00:00:00+08:00">
+                2016-06-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/后端/" itemprop="url" rel="index">
+                    <span itemprop="name">后端</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="1-安装命令如下"><a href="#1-安装命令如下" class="headerlink" title="1.安装命令如下"></a>1.安装命令如下</h3><blockquote>
+<p>sudo apt-get install mysql-server<br>然后按照提示输入数据库密码即可</p>
+</blockquote>
+<h3 id="2-启动mysql命令"><a href="#2-启动mysql命令" class="headerlink" title="2.启动mysql命令"></a>2.启动mysql命令</h3><blockquote>
+<p>service mysql start<br>这时系统会提示输入密码，正确输入后没有报错就是启动成功了</p>
+</blockquote>
+<h3 id="3-关闭mysql服务"><a href="#3-关闭mysql服务" class="headerlink" title="3.关闭mysql服务"></a>3.关闭mysql服务</h3><blockquote>
+<p>service mysql stop</p>
+</blockquote>
+<h3 id="4-连接数据库"><a href="#4-连接数据库" class="headerlink" title="4.连接数据库"></a>4.连接数据库</h3><blockquote>
+<p>mysql -u root -p<br>这时系统会提示输入密码，正确输入后会进去mysql命令行下</p>
+</blockquote>
+<h3 id="5-查看数据库"><a href="#5-查看数据库" class="headerlink" title="5.查看数据库"></a>5.查看数据库</h3><blockquote>
+<p>show databases;<br>需要注意的是mysql命令后面一定要加分号，否则不会运行</p>
+</blockquote>
+<h3 id="6-创建数据库"><a href="#6-创建数据库" class="headerlink" title="6.创建数据库"></a>6.创建数据库</h3><blockquote>
+<p>create database name;</p>
+</blockquote>
+<h3 id="7-创建表"><a href="#7-创建表" class="headerlink" title="7.创建表"></a>7.创建表</h3><blockquote>
+<p>create table user(id int(3) auto_increment not null primary key, name char(8));</p>
+</blockquote>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/05/10/超文本编辑器simditor简单应用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="李续铖">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/lxchead.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李续铖的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2016/05/10/超文本编辑器simditor简单应用/" itemprop="url">超文本编辑器simditor简单应用</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-05-10T00:00:00+08:00">
+                2016-05-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/前端/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>我正在做一个在线考试的网站，那就需要老师布置试题，但是麻烦的是试题里面可能会有图片，答案里面也可能要有图片，所以就很麻烦，这时候想到了富文本编辑器，于是就发现了simditor，功能比较简单，加载也比较快<br><a href="http://www.jq22.com/jquery-info590" target="_blank" rel="external">http://www.jq22.com/jquery-info590</a></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"am-g"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"am-u-md-6 am-cf"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"am-fl am-cf"</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"am-btn-toolbar am-fl"</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"am-btn-group am-btn-group-xs"</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">"button"</span> <span class="attr">class</span>=<span class="string">"am-btn am-btn-default"</span> <span class="attr">id</span>=<span class="string">"b0"</span>&gt;</span><span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"am-icon-plus"</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span> 编辑题目<span class="tag">&lt;/<span class="name">button</span>&gt;</span></div><div class="line">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"am-btn-group am-btn-group-xs"</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">"button"</span> <span class="attr">class</span>=<span class="string">"am-btn am-btn-default"</span> <span class="attr">id</span>=<span class="string">"b1"</span>&gt;</span><span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"am-icon-plus"</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span> A选项<span class="tag">&lt;/<span class="name">button</span>&gt;</span></div><div class="line">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"am-btn-group am-btn-group-xs"</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">"button"</span> <span class="attr">class</span>=<span class="string">"am-btn am-btn-default"</span> <span class="attr">id</span>=<span class="string">"b2"</span>&gt;</span><span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"am-icon-plus"</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span> B选项<span class="tag">&lt;/<span class="name">button</span>&gt;</span></div><div class="line">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"am-btn-group am-btn-group-xs"</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">"button"</span> <span class="attr">class</span>=<span class="string">"am-btn am-btn-default"</span> <span class="attr">id</span>=<span class="string">"b3"</span>&gt;</span><span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"am-icon-plus"</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span> C选项<span class="tag">&lt;/<span class="name">button</span>&gt;</span></div><div class="line">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"am-btn-group am-btn-group-xs"</span>&gt;</span></div><div class="line">                    <span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">"button"</span> <span class="attr">class</span>=<span class="string">"am-btn am-btn-default"</span> <span class="attr">id</span>=<span class="string">"b4"</span>&gt;</span><span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"am-icon-plus"</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span> D选项<span class="tag">&lt;/<span class="name">button</span>&gt;</span></div><div class="line">                <span class="tag">&lt;/<span class="name">div</span>&gt;</span>      </div><div class="line">            <span class="tag">&lt;/<span class="name">div</span>&gt;</span>          </div><div class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"></div><div class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">form</span> <span class="attr">class</span>=<span class="string">"am-form am-form-inline"</span> <span class="attr">style</span>=<span class="string">"display:inline-block;height:30px"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"am-form-group "</span> <span class="attr">style</span>=<span class="string">"margin-bottom: 0"</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">"number"</span> <span class="attr">id</span>=<span class="string">"score"</span> <span class="attr">placeholder</span>=<span class="string">"请输入分值"</span> <span class="attr">required</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"am-form-group "</span> <span class="attr">style</span>=<span class="string">"margin-bottom: 0;width: 100px"</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">select</span>  <span class="attr">required</span>  <span class="attr">id</span>=<span class="string">"answer"</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">option</span> <span class="attr">value</span>=<span class="string">"A"</span>&gt;</span>A<span class="tag">&lt;/<span class="name">option</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">option</span> <span class="attr">value</span>=<span class="string">"B"</span>&gt;</span>B<span class="tag">&lt;/<span class="name">option</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">option</span> <span class="attr">value</span>=<span class="string">"C"</span>&gt;</span>C<span class="tag">&lt;/<span class="name">option</span>&gt;</span></div><div class="line">                <span class="tag">&lt;<span class="name">option</span> <span class="attr">value</span>=<span class="string">"D"</span>&gt;</span>D<span class="tag">&lt;/<span class="name">option</span>&gt;</span></div><div class="line">            <span class="tag">&lt;/<span class="name">select</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="name">span</span> <span class="attr">class</span>=<span class="string">"am-form-caret"</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">form</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">br</span>/&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">"am-g"</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">div</span> <span class="attr">class</span>=<span class="string">" am-u-sm-centered"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">textarea</span> <span class="attr">rows</span>=<span class="string">"5"</span> <span class="attr">placeholder</span>=<span class="string">"请输入内容"</span> <span class="attr">id</span>=<span class="string">"editor"</span> <span class="attr">autofocus</span>&gt;</span><span class="tag">&lt;/<span class="name">textarea</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">br</span>/&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="name">button</span> <span class="attr">type</span>=<span class="string">"button"</span> <span class="attr">id</span>=<span class="string">"submit"</span> <span class="attr">class</span>=<span class="string">"am-btn am-btn-primary am-radius"</span> <span class="attr">style</span>=<span class="string">"position: absolute;right: 5%;bottom: 0"</span>&gt;</span>提交<span class="tag">&lt;/<span class="name">button</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>html主要代码如上，下面介绍一下simditor的用法<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">&lt;!--首先在网页中引用css和js文件--&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">"~/Scripts/bower_components/fontawesome/css/font-awesome.css"</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">"~/Scripts/bower_components/simditor/styles/simditor.css"</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">link</span> <span class="attr">href</span>=<span class="string">"~/Scripts/bower_components/simditor-emoji/styles/simditor-emoji.css"</span> <span class="attr">rel</span>=<span class="string">"stylesheet"</span> /&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"/Scripts/bower_components/jquery/dist/jquery.min.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"~/Scripts/bower_components/simple-module/lib/module.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"~/Scripts/bower_components/simple-hotkeys/lib/hotkeys.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"~/Scripts/bower_components/simple-uploader/lib/uploader.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"~/Scripts/bower_components/simditor/lib/simditor.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"~/Scripts/bower_components/simditor-emoji/lib/simditor-emoji.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">script</span> <span class="attr">src</span>=<span class="string">"~/Scripts/bower_components/simditor-markdown/lib/simditor-markdown.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>接着初始化编辑器<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></div><div class="line">    <span class="keyword">var</span> editor = <span class="keyword">new</span> Simditor(&#123;</div><div class="line">        <span class="attr">textarea</span>: $(<span class="string">'#editor'</span>),</div><div class="line">        <span class="attr">toolbar</span>: [</div><div class="line">            <span class="string">'title'</span>,</div><div class="line">            <span class="string">'bold'</span>,</div><div class="line">            <span class="string">'underline'</span>,</div><div class="line">            <span class="string">'strikethrough'</span>,</div><div class="line">            <span class="string">'color'</span>,</div><div class="line">            <span class="string">'ol'</span>, <span class="string">'ul'</span>,</div><div class="line">            <span class="string">'blockquote'</span>,</div><div class="line">            <span class="string">'code'</span>,</div><div class="line">            <span class="string">'table'</span>,</div><div class="line">            <span class="string">'link'</span>,</div><div class="line">            <span class="string">'image'</span>,</div><div class="line">            <span class="string">'hr'</span>,</div><div class="line">            <span class="string">'indent'</span>, <span class="string">'outdent'</span>,</div><div class="line">            <span class="string">'emoji'</span></div><div class="line">        ],</div><div class="line">        <span class="attr">upload</span>: &#123;</div><div class="line">            <span class="string">'url'</span>: <span class="string">'/Common/Upload/Index'</span>,</div><div class="line"></div><div class="line">                <span class="string">'connectionCount'</span>: <span class="number">8</span></div><div class="line">            &#125;,</div><div class="line">            <span class="attr">pasteImage</span>: <span class="literal">true</span>,</div><div class="line">            <span class="attr">emoji</span>: &#123;</div><div class="line">                <span class="attr">imagePath</span>: <span class="string">'/Scripts/bower_components/simditor-emoji/images/emoji/'</span></div><div class="line">            &#125;,</div><div class="line">            <span class="attr">markdown</span>: <span class="literal">true</span></div><div class="line">        &#125;);</div><div class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>这样编辑器就可以使用了，下面是一些编辑试题的逻辑<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></div><div class="line">       $(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">           <span class="keyword">var</span> t = $(<span class="string">"#editor"</span>);</div><div class="line">           <span class="keyword">var</span> t0 = [];</div><div class="line">           <span class="keyword">var</span> t1 = [];</div><div class="line">           <span class="keyword">var</span> t2 = [];</div><div class="line">           <span class="keyword">var</span> t3 = [];</div><div class="line">           <span class="keyword">var</span> t4 = [];</div><div class="line">           <span class="keyword">var</span> score = $(<span class="string">"#score"</span>);</div><div class="line">           <span class="keyword">var</span> trueop =$(<span class="string">"#answer"</span>);</div><div class="line">           <span class="keyword">var</span> nowT = t0;</div><div class="line">           $(<span class="string">"#b0"</span>).click(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">               nowT[<span class="number">0</span>]= t.val();</div><div class="line">               nowT = t0;</div><div class="line">               editor.setValue(t0);</div><div class="line">           &#125;);</div><div class="line">           $(<span class="string">"#b1"</span>).click(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">               nowT[<span class="number">0</span>] = t.val();</div><div class="line">               nowT = t1;</div><div class="line">               editor.setValue(t1);</div><div class="line">           &#125;);</div><div class="line">           $(<span class="string">"#b2"</span>).click(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">               nowT[<span class="number">0</span>] = t.val();</div><div class="line">               nowT = t2;</div><div class="line">               editor.setValue(t2);</div><div class="line">           &#125;);</div><div class="line">           $(<span class="string">"#b3"</span>).click(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">               nowT[<span class="number">0</span>] = t.val();</div><div class="line">               nowT = t3;</div><div class="line">               editor.setValue(t3);</div><div class="line">           &#125;);</div><div class="line">           $(<span class="string">"#b4"</span>).click(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">               nowT[<span class="number">0</span>] = t.val();</div><div class="line">               nowT = t4;</div><div class="line">               editor.setValue(t4);</div><div class="line">           &#125;);</div><div class="line">           $(<span class="string">"#submit"</span>).click(<span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line">               nowT[<span class="number">0</span>] = t.val();</div><div class="line">               <span class="keyword">if</span> (t0 == [<span class="string">""</span>]) &#123;</div><div class="line">                   alert(<span class="string">"题目不能为空"</span>);</div><div class="line">               &#125;</div><div class="line">               <span class="keyword">else</span> <span class="keyword">if</span> (t1 == [<span class="string">""</span>]) &#123;</div><div class="line">                   alert(<span class="string">"A选项不能为空"</span>);</div><div class="line">               &#125;</div><div class="line">               <span class="keyword">else</span> <span class="keyword">if</span> (t2 == [<span class="string">""</span>]) &#123;</div><div class="line">                   alert(<span class="string">"B选项不能为空"</span>);</div><div class="line">               &#125;</div><div class="line">               <span class="keyword">else</span> <span class="keyword">if</span> (t3 == [<span class="string">""</span>]) &#123;</div><div class="line">                   alert(<span class="string">"C选项不能为空"</span>);</div><div class="line">               &#125;</div><div class="line">               <span class="keyword">else</span> <span class="keyword">if</span> (t4 == [<span class="string">""</span>]) &#123;</div><div class="line">                   alert(<span class="string">"D选项不能为空"</span>);</div><div class="line">               &#125;</div><div class="line">               <span class="keyword">else</span> <span class="keyword">if</span> (score.val()==<span class="number">0</span>) &#123;</div><div class="line">                   alert(<span class="string">"分值不能为空"</span>);</div><div class="line">               &#125;</div><div class="line">               <span class="keyword">else</span> <span class="keyword">if</span> (trueop.val() == [<span class="string">""</span>]) &#123;</div><div class="line">                   alert(<span class="string">"答案不能为空"</span>);</div><div class="line">               &#125; <span class="keyword">else</span> &#123;</div><div class="line">                   $.ajax(&#123;</div><div class="line">                       <span class="attr">url</span>: <span class="string">"/Admin/Questions/AddTest"</span>,</div><div class="line">                       <span class="attr">data</span>: &#123;</div><div class="line">                           <span class="attr">content</span>: t0[<span class="number">0</span>],</div><div class="line">                           <span class="attr">aop</span>: t1[<span class="number">0</span>],</div><div class="line">                           <span class="attr">bop</span>: t2[<span class="number">0</span>],</div><div class="line">                           <span class="attr">cop</span>: t3[<span class="number">0</span>],</div><div class="line">                           <span class="attr">dop</span>: t4[<span class="number">0</span>],</div><div class="line">                           <span class="attr">correctop</span>: trueop.val(),</div><div class="line">                           <span class="attr">score</span>: score.val()</div><div class="line">                       &#125;,</div><div class="line">                       <span class="attr">success</span>: <span class="function"><span class="keyword">function</span> (<span class="params">res</span>) </span>&#123;</div><div class="line">                           <span class="keyword">if</span> (res == <span class="number">0</span>) &#123;</div><div class="line">                               alert(<span class="string">"添加失败"</span>);</div><div class="line">                           &#125; <span class="keyword">else</span> &#123;</div><div class="line">                               alert(<span class="string">"成功"</span>);</div><div class="line">                               <span class="built_in">window</span>.location.href = <span class="string">"/Admin/Questions/Add"</span>;</div><div class="line">                           &#125;</div><div class="line">                       &#125;</div><div class="line">                       </div><div class="line">                   &#125;);</div><div class="line">               &#125;</div><div class="line">               </div><div class="line">           &#125;);</div><div class="line"></div><div class="line">       &#125;);</div><div class="line">   <span class="tag">&lt;/<span class="name">script</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>自此终于搞定了这个问题，这个过程用到了一些东西，ajax，simditor，还有文件上传，通过一步步的调试，改bug，越来越熟练网页的开发，没发现simditor之前本来还天真的想自己解决这个问题，既然有成熟的插件，就要学会去用，这样不只会节省时间，而且效果也非常好。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/04/25/Simple-Calendar开发文档/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="李续铖">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/lxchead.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李续铖的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2016/04/25/Simple-Calendar开发文档/" itemprop="url">Simple-Calendar开发文档</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-04-25T00:00:00+08:00">
+                2016-04-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/前端/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>##获取Simple-Calendar<br>从GitHub上下载 <a href="https://github.com/Lixucheng/Simple-Calendar" target="_blank" rel="external">链接</a></p>
+<p>##引入资源</p>
+<p>使用日历插件前首先要引用资源：JS CSS<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;link rel=<span class="string">"stylesheet"</span> type=<span class="string">"text/css"</span> href=<span class="string">"css/simple-calendar.css"</span>&gt;</div><div class="line"></div><div class="line"><span class="xml"><span class="tag">&lt;<span class="name">script</span> <span class="attr">type</span>=<span class="string">"text/jacascrip"</span> <span class="attr">src</span>=<span class="string">"js/simple-calendar.js"</span>&gt;</span><span class="undefined"></span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span></div></pre></td></tr></table></figure></p>
+<p>##初始化一个日历</p>
+<p>首先为calendar准备一个容器，可以设置大小，也可以在options中设置，不设置的话自动设为默认<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">'container'</span>&gt;</span><span class="tag">&lt;/<span class="name">div</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">script</span>&gt;</span><span class="javascript"></span></div><div class="line">  <span class="keyword">var</span> myCalendar = <span class="keyword">new</span> SimpleCalendar(<span class="string">'#container'</span>);</div><div class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>这样一个日历就诞生了 ^-^</p>
+<p>##配置项说明<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> options = &#123;</div><div class="line">      <span class="attr">width</span>: <span class="string">'500px'</span>,</div><div class="line">      <span class="attr">height</span>: <span class="string">'500px'</span>,</div><div class="line">      <span class="attr">language</span>: <span class="string">'CH'</span>, <span class="comment">//语言</span></div><div class="line">      showLunarCalendar: <span class="literal">true</span>, <span class="comment">//阴历</span></div><div class="line">      showHoliday: <span class="literal">true</span>, <span class="comment">//休假</span></div><div class="line">      showFestival: <span class="literal">true</span>, <span class="comment">//节日</span></div><div class="line">      showLunarFestival: <span class="literal">true</span>, <span class="comment">//农历节日</span></div><div class="line">      showSolarTerm: <span class="literal">true</span>, <span class="comment">//节气</span></div><div class="line">      showMark: <span class="literal">true</span>, <span class="comment">//标记</span></div><div class="line">      timeRange: &#123;</div><div class="line">        <span class="attr">startYear</span>: <span class="number">1900</span>,</div><div class="line">        <span class="attr">endYear</span>: <span class="number">2049</span></div><div class="line">      &#125;,</div><div class="line">      <span class="attr">mark</span>: &#123;</div><div class="line">        <span class="string">'2016-5-5'</span>: <span class="string">'上学'</span></div><div class="line">      &#125;,</div><div class="line">      <span class="attr">theme</span>: &#123;</div><div class="line">        <span class="attr">changeAble</span>: <span class="literal">false</span>,</div><div class="line">        <span class="attr">weeks</span>: &#123;</div><div class="line">          <span class="attr">backgroundColor</span>: <span class="string">'#FBEC9C'</span>,</div><div class="line">          <span class="attr">fontColor</span>: <span class="string">'#4A4A4A'</span>,</div><div class="line">          <span class="attr">fontSize</span>: <span class="string">'20px'</span>,</div><div class="line">        &#125;,</div><div class="line">        <span class="attr">days</span>: &#123;</div><div class="line">          <span class="attr">backgroundColor</span>: <span class="string">'#ffffff'</span>,</div><div class="line">          <span class="attr">fontColor</span>: <span class="string">'#565555'</span>,</div><div class="line">          <span class="attr">fontSize</span>: <span class="string">'24px'</span></div><div class="line">        &#125;,</div><div class="line">        <span class="attr">todaycolor</span>: <span class="string">'orange'</span>,</div><div class="line">        <span class="attr">activeSelectColor</span>: <span class="string">'orange'</span>,</div><div class="line">      &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<h3 id="国际化"><a href="#国际化" class="headerlink" title="国际化"></a>国际化</h3><blockquote>
+<p>language：<br>语言的话目前只支持中文和英文，分别对应’CH’,’EN’</p>
+</blockquote>
+<p>如果想要加更多的语言或者更改现在的显示，可以直接更改languageData内容</p>
+<h3 id="节日显示配置"><a href="#节日显示配置" class="headerlink" title="节日显示配置"></a>节日显示配置</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">showLunarCalendar: <span class="literal">true</span>, <span class="comment">//是否显示阴历日期</span></div><div class="line">showHoliday: <span class="literal">true</span>,       <span class="comment">//是否显示休假休假</span></div><div class="line">showFestival: <span class="literal">true</span>,      <span class="comment">//是否显示国际节日</span></div><div class="line">showLunarFestival: <span class="literal">true</span>, <span class="comment">//是否显示农历节日</span></div><div class="line">showSolarTerm: <span class="literal">true</span>,     <span class="comment">//是否显示节气</span></div><div class="line">showMark: <span class="literal">true</span>,          <span class="comment">//是否显示标记日期</span></div></pre></td></tr></table></figure>
+<h3 id="时间范围"><a href="#时间范围" class="headerlink" title="时间范围"></a>时间范围</h3><p>这个时间范围设置的是下拉框中的年数范围<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">timeRange: &#123;</div><div class="line">    <span class="attr">startYear</span>: <span class="number">1900</span>,</div><div class="line">    <span class="attr">endYear</span>: <span class="number">2049</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="标记日期"><a href="#标记日期" class="headerlink" title="标记日期"></a>标记日期</h3><p>标记日期配置只有在 showMark 为 true 时才会生效</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">mark: &#123;</div><div class="line">        <span class="string">'2016-5-5'</span>: <span class="string">'上学'</span></div><div class="line">      &#125;</div></pre></td></tr></table></figure>
+<p>这样就会在日历的对应日期上面添加标记，当鼠标停留时显示输入的信息</p>
+<h3 id="主题配置"><a href="#主题配置" class="headerlink" title="主题配置"></a>主题配置</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">theme: &#123;</div><div class="line">       <span class="attr">changeAble</span>: <span class="literal">false</span>,</div><div class="line">       <span class="attr">weeks</span>: &#123;</div><div class="line">         <span class="attr">backgroundColor</span>: <span class="string">'#FBEC9C'</span>,</div><div class="line">         <span class="attr">fontColor</span>: <span class="string">'#4A4A4A'</span>,</div><div class="line">         <span class="attr">fontSize</span>: <span class="string">'20px'</span>,</div><div class="line">       &#125;,</div><div class="line">       <span class="attr">days</span>: &#123;</div><div class="line">         <span class="attr">backgroundColor</span>: <span class="string">'#ffffff'</span>,</div><div class="line">         <span class="attr">fontColor</span>: <span class="string">'#565555'</span>,</div><div class="line">         <span class="attr">fontSize</span>: <span class="string">'24px'</span></div><div class="line">       &#125;,</div><div class="line">       <span class="attr">todaycolor</span>: <span class="string">'orange'</span>,</div><div class="line">       <span class="attr">activeSelectColor</span>: <span class="string">'orange'</span>,</div><div class="line">     &#125;</div></pre></td></tr></table></figure>
+<p>主题配置只有在changeAble 为 true 时才会生效<br>weeks 设置的是星期一栏的主题，分别对应背景颜色，字体颜色，字体大小<br>days  设置的是日期的主题，参数同上<br>todaycolor 设置的是当天的日期背景颜色<br>activeSelectColor 设置的是鼠标滑过事件对应日期的边框颜色</p>
+<h2 id="事件接口说明"><a href="#事件接口说明" class="headerlink" title="事件接口说明"></a>事件接口说明</h2><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">myCalendar.updateSize(<span class="string">'500px'</span>, <span class="string">'500px'</span>);</div><div class="line">myCalendar.addMark(<span class="string">'2016-3-7'</span>, <span class="string">'test'</span>);</div><div class="line">myCalendar.setLanguage(<span class="string">'EN'</span>)</div><div class="line">myCalendar.showFestival(<span class="literal">false</span>);</div><div class="line">myCalendar.showLunarCalendar(<span class="literal">false</span>);</div><div class="line">myCalendar.showHoliday(<span class="literal">false</span>);</div><div class="line">myCalendar.showSolarTerm(<span class="literal">false</span>);</div><div class="line">myCalendar.showLunarFestival(<span class="literal">false</span>);</div><div class="line">myCalendar.showMark(<span class="literal">false</span>);</div></pre></td></tr></table></figure>
+<h3 id="updateSize-width-height"><a href="#updateSize-width-height" class="headerlink" title="updateSize(width,height)"></a>updateSize(width,height)</h3><blockquote>
+<p>调整日历大小，会自动根据大小调整对应的样式</p>
+</blockquote>
+<h3 id="addMark-day-info"><a href="#addMark-day-info" class="headerlink" title="addMark(day, info)"></a>addMark(day, info)</h3><blockquote>
+<p>day   是一个可以确定一个日期的字符串<br>info  是要显示的信息</p>
+</blockquote>
+<h3 id="setLenguage-languageStr"><a href="#setLenguage-languageStr" class="headerlink" title="setLenguage(languageStr)"></a>setLenguage(languageStr)</h3><blockquote>
+<p>设置语言，目前支持的语言有’CH’,’EN’<br>如果想要增加语言，请在languageData中修改</p>
+</blockquote>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//关闭或者显示国际节日</span></div><div class="line">showFestival(<span class="literal">false</span>); </div><div class="line"><span class="comment">//关闭或者显示阴历日期</span></div><div class="line">showLunarCalendar(<span class="literal">false</span>);</div><div class="line"><span class="comment">//关闭或者显示假期</span></div><div class="line">showHoliday(<span class="literal">false</span>);</div><div class="line"><span class="comment">//关闭或者显示二十四节气</span></div><div class="line">showSolarTerm(<span class="literal">false</span>);</div><div class="line"><span class="comment">//关闭或者显示阴历节日</span></div><div class="line">showLunarFestival(<span class="literal">false</span>);</div><div class="line"><span class="comment">//关闭或者显示标记</span></div><div class="line">showMark(<span class="literal">false</span>)</div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/04/25/Koajs+sequelize+mysql环境搭建/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="李续铖">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/lxchead.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李续铖的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2016/04/25/Koajs+sequelize+mysql环境搭建/" itemprop="url">Koajs+sequelize+mysql环境搭建</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-04-25T00:00:00+08:00">
+                2016-04-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/后端/" itemprop="url" rel="index">
+                    <span itemprop="name">后端</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="1-首先通过npm-init-创建package-json文件"><a href="#1-首先通过npm-init-创建package-json文件" class="headerlink" title="1.首先通过npm init 创建package.json文件"></a>1.首先通过npm init 创建package.json文件</h3><blockquote>
+<p>$ npm init</p>
+<h3 id="2-安装Koajs"><a href="#2-安装Koajs" class="headerlink" title="2.安装Koajs"></a>2.安装Koajs</h3><p>$ npm install koa –save</p>
+</blockquote>
+<p>在根目录下创建一个app.js的文件<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> koa = <span class="built_in">require</span>(<span class="string">'koa'</span>);</div><div class="line"><span class="keyword">var</span> app = koa();</div><div class="line"></div><div class="line">app.use(<span class="function"><span class="keyword">function</span> *(<span class="params"></span>)</span>&#123;</div><div class="line">    <span class="keyword">this</span>.body = <span class="string">'Hello Lxc'</span>;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">app.listen(<span class="number">3000</span>);</div></pre></td></tr></table></figure></p>
+<h3 id="3-启动服务器"><a href="#3-启动服务器" class="headerlink" title="3.启动服务器"></a>3.启动服务器</h3><blockquote>
+<p>$ node –harmony app.js</p>
+</blockquote>
+<p>我们在浏览器中输入 <a href="http://localhost:3000就可以看见正确的输出了" target="_blank" rel="external">http://localhost:3000就可以看见正确的输出了</a></p>
+<h3 id="4-在工程中安装mysql和sequelize"><a href="#4-在工程中安装mysql和sequelize" class="headerlink" title="4.在工程中安装mysql和sequelize"></a>4.在工程中安装mysql和sequelize</h3><blockquote>
+<p>$ npm install mysql –save</p>
+<p>$  npm install sequelize –save</p>
+<h3 id="5-数据库配置"><a href="#5-数据库配置" class="headerlink" title="5.数据库配置"></a>5.数据库配置</h3><p>在根目录下新建一个models文件夹，在里面新建一个config.js的数据库配置文件<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">module</span>.exports = &#123;</div><div class="line">    <span class="attr">db</span>: &#123;</div><div class="line">        <span class="attr">name</span>: <span class="string">'mysql'</span>,</div><div class="line">        <span class="attr">username</span>: <span class="string">'root'</span>,</div><div class="line">        <span class="attr">pwd</span>: <span class="string">'xxxxxx'</span>,</div><div class="line">         <span class="attr">host</span>: <span class="string">'127.0.0.1'</span>,</div><div class="line">        <span class="attr">database</span>: <span class="string">'test'</span>,</div><div class="line">        toString() &#123;</div><div class="line">            <span class="keyword">return</span> <span class="string">`<span class="subst">$&#123;<span class="keyword">this</span>.name&#125;</span>://<span class="subst">$&#123;<span class="keyword">this</span>.username&#125;</span>:<span class="subst">$&#123;<span class="keyword">this</span>.pwd&#125;</span>@<span class="subst">$&#123;<span class="keyword">this</span>.host&#125;</span>/<span class="subst">$&#123;<span class="keyword">this</span>.database&#125;</span>`</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+</blockquote>
+<p>再新建一个db.js文件，引入config.js<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * Created by lxc on 16-3-3.</div><div class="line"> */</div><div class="line"><span class="keyword">var</span> Sequelize = <span class="built_in">require</span>(<span class="string">'sequelize'</span>);</div><div class="line"><span class="keyword">var</span> configs = <span class="built_in">require</span>(<span class="string">'./config.js'</span>);</div><div class="line"><span class="keyword">var</span> sequelize = <span class="keyword">new</span> Sequelize(configs.db.toString(), &#123;</div><div class="line">    <span class="attr">logging</span>: <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;&#125;</div><div class="line">&#125;);</div><div class="line"></div><div class="line">sequelize.define(<span class="string">'message'</span>, &#123;</div><div class="line">        <span class="attr">title</span>: Sequelize.TEXT,</div><div class="line">        <span class="attr">link</span>: Sequelize.TEXT&#125;);</div><div class="line"></div><div class="line">sequelize.sync(&#123;</div><div class="line">    <span class="attr">force</span>: <span class="literal">true</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<p>接下来我们在命令行中运行db.js</p>
+<blockquote>
+<p>node db.js</p>
+</blockquote>
+<p>完成后我们去sql查看是否创建成功</p>
+<blockquote>
+<p>mysql&gt; show columns from messages;<br>+———–+———-+——+—–+———+—————-+<br>| Field     | Type     | Null | Key | Default | Extra          |<br>+———–+———-+——+—–+———+—————-+<br>| id        | int(11)  | NO   | PRI | NULL    | auto_increment |<br>| title     | text     | YES  |     | NULL    |                |<br>| link      | text     | YES  |     | NULL    |                |<br>| createdAt | datetime | NO   |     | NULL    |                |<br>| updatedAt | datetime | NO   |     | NULL    |                |<br>+———–+———-+——+—–+———+—————-+<br>5 rows in set (0.00 sec)</p>
+</blockquote>
+<p>看到这个结果就是创建成功了^-^</p>
+<p>这个应用的结构还比较简单，正常开发的话肯定要比这复杂的多，项目的结构都要考虑，如果以后有时间再来补充吧。</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/04/10/AnjularJS学习笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="李续铖">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/lxchead.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李续铖的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2016/04/10/AnjularJS学习笔记/" itemprop="url">AnjularJS学习笔记</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-04-10T00:00:00+08:00">
+                2016-04-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/前端/" itemprop="url" rel="index">
+                    <span itemprop="name">前端</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>以前也接触过Angularjs，也用过一些，如今又回来重新看看，想理解的更深刻一些，写的可能不是很详细，但却是都是我学习的历程。</p>
+<h3 id="1-安装"><a href="#1-安装" class="headerlink" title="1. 安装"></a>1. 安装</h3><p>安装方式可以自己选择，可以去网上下载，下载地址：<br><a href="http://angularjs.org；" target="_blank" rel="external">http://angularjs.org；</a></p>
+<p>也可以直接引用：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;script src=&quot;http://code.angularjs.org/angular-1.0.1.min.js&quot;&gt;&lt;/script&gt;</div></pre></td></tr></table></figure></p>
+<p>我是用的bower：</p>
+<blockquote>
+<p>bower install angularjs -save</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;script src=<span class="string">'bower_components/angular/angular.js'</span>&gt;&lt;/script&gt;</div></pre></td></tr></table></figure>
+<h3 id="2-HelloWold"><a href="#2-HelloWold" class="headerlink" title="2. HelloWold"></a>2. HelloWold</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">&lt;body ng-app&gt;</div><div class="line">    hello &#123;&#123;&apos;world!&apos;&#125;&#125;</div><div class="line">&lt;/body&gt;</div></pre></td></tr></table></figure>
+<p>这样浏览器中就会打印出hello world！啦！</p>
+<h3 id="3-ng-app"><a href="#3-ng-app" class="headerlink" title="3. ng-app"></a>3. ng-app</h3><p><code>ng-app</code>指令标记了AngularJS脚本的作用域，在<code>&lt;html&gt;</code>中添加ng-app属性即说明整个<code>&lt;html&gt;</code>都是AngularJS脚本作用域。也可以在局部使用ng-app指令，像上面的例子<code>&lt;body ng-app&gt;</code>，则AngularJS脚本仅在该<code>&lt;body&gt;</code>中运行。<br><strong>注：全局仅可以有一个<code>ng-app</code></strong></p>
+<h3 id="4-ng-controller"><a href="#4-ng-controller" class="headerlink" title="4. ng-controller"></a>4. ng-controller</h3><p>什么是controller，这就涉及到<code>模型-视图-控制器（MVC）模式</code>了<br><code>ng-controller</code>命令就是绑定controller的命令,而他的作用域也只是在绑定的标签之下<br>看下面一段代码：<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">ng-app</span>=<span class="string">'myApp'</span>&gt;</span></div><div class="line">  hello &#123;&#123;'world!'&#125;&#125;</div><div class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">ng-controller</span>=<span class="string">'myCtrl'</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span> &#123;&#123;myinfo.name&#125;&#125; <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">ng-controller</span>=<span class="string">'youCtrl'</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span> &#123;&#123;youinfo.name&#125;&#125; <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> app = angular.module(<span class="string">'myApp'</span>, []);</div><div class="line">app.controller(<span class="string">'myCtrl'</span>, [<span class="string">'$scope'</span>,</div><div class="line">  <span class="function"><span class="keyword">function</span>(<span class="params">$scope</span>) </span>&#123;</div><div class="line">      <span class="keyword">var</span> people = <span class="keyword">new</span> <span class="built_in">Object</span>();</div><div class="line">      people.name=<span class="string">'lxc'</span>;</div><div class="line">      people.age=<span class="number">22</span>;</div><div class="line">      $scope.myinfo=people;</div><div class="line">  &#125;</div><div class="line">]);</div><div class="line">app.controller(<span class="string">'youCtrl'</span>, [<span class="string">'$scope'</span>,</div><div class="line">  <span class="function"><span class="keyword">function</span>(<span class="params">$scope</span>) </span>&#123;</div><div class="line">    <span class="keyword">var</span> people = <span class="keyword">new</span> <span class="built_in">Object</span>();</div><div class="line">    people.name = <span class="string">'you'</span>;</div><div class="line">    people.age = <span class="number">2</span>;</div><div class="line">    $scope.youinfo = people;</div><div class="line">  &#125;</div><div class="line">]);</div></pre></td></tr></table></figure>
+<p>我在js中首先定义了一个<code>myApp</code>，在<code>myApp</code>下又定义了两个controller，<code>myCtrl</code>和<code>youCtrl</code>，在控制器中分别初始化两个<code>people</code>;<br>在html中我分别将两个控制器绑定<code>div</code>,在其中打印出<code>name</code><br>这时看看正确结果：</p>
+<blockquote>
+<p>hello world!<br>lxc<br>you</p>
+</blockquote>
+<p>下面我们来试验一下一个controller中的值可不可以在绑定的表情外部访问或者在其他controller中访问：<br>js不动，更改html代码如下<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">ng-app</span>=<span class="string">'myApp'</span>&gt;</span></div><div class="line">  hello &#123;&#123;'world!'&#125;&#125;</div><div class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">ng-controller</span>=<span class="string">'myCtrl'</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span> &#123;&#123;myinfo.name&#125;&#125; <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span>test: &#123;&#123;youinfo.name&#125;&#125; <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">div</span> <span class="attr">ng-controller</span>=<span class="string">'youCtrl'</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span> &#123;&#123;youinfo.name&#125;&#125; <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">div</span>&gt;</span>test: &#123;&#123;myinfo.name&#125;&#125; <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">  <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>test: &#123;&#123;youinfo.name&#125;&#125; <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line">  <span class="tag">&lt;<span class="name">div</span>&gt;</span>test: &#123;&#123;youinfo.name&#125;&#125; <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<p>结果如下：</p>
+<blockquote>
+<p>hello world!<br>lxc<br>test:<br>you<br>test:<br>test:<br>test:</p>
+</blockquote>
+<p>我们发现一个controller中的元素只能在自己的作用域中访问，那我们要想访问另一个controller中的元素怎么办呢？<br>答案是：</p>
+<blockquote>
+<ul>
+<li>利用作用域继承的原理，子控制器访问父级控制器中的内容。</li>
+<li>使用angularJS中的事件，也就是使用$on,$emit,$broadcast进行消息传递</li>
+<li>使用angularJS中的服务</li>
+</ul>
+</blockquote>
+<h3 id="5-一些指令"><a href="#5-一些指令" class="headerlink" title="5. 一些指令"></a>5. 一些指令</h3><h4 id="（1）ng-repeat"><a href="#（1）ng-repeat" class="headerlink" title="（1）ng-repeat"></a>（1）ng-repeat</h4><p>这是一个循环指令<br>下面看个例子：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> list=[<span class="string">'lxc1'</span>,<span class="string">'lxc2'</span>,<span class="string">'lxc3'</span>];</div><div class="line">$scope.list=list;</div><div class="line">$scope.changelist=<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">  list.push(<span class="string">'lxc4'</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">  </div><div class="line"><span class="tag">&lt;<span class="name">li</span> <span class="attr">ng-repeat</span>=<span class="string">'i in list'</span>&gt;</span></div><div class="line">  &#123;&#123;i&#125;&#125;</div><div class="line"><span class="tag">&lt;/<span class="name">li</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">button</span>  <span class="attr">ng-click</span>=<span class="string">'changelist()'</span>&gt;</span>changelist()<span class="tag">&lt;/<span class="name">button</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>界面显示如下</p>
+<blockquote>
+<p>lxc1<br>  lxc2<br>  lxc3</p>
+</blockquote>
+<p>这时我们点击changelist（）看看发生了什么：</p>
+<blockquote>
+<p>lxc1<br>lxc2<br>lxc3<br>lxc4</p>
+</blockquote>
+<p>我们发现数组的更改直接反应在了html上，这就是angular的优点，以前的话还要用jQuery再在html中加一个标签，现在这些事情angular都为我们做了，是不是很方便^-^</p>
+<h3 id="（2）-ng-click"><a href="#（2）-ng-click" class="headerlink" title="（2） ng-click"></a>（2） ng-click</h3><p>这个已经在上面的例子总用到了，可以为标签的点击事件绑定对应作用域中的一个方法，也是很方便</p>
+<h3 id="（3）-ng-model"><a href="#（3）-ng-model" class="headerlink" title="（3） ng-model"></a>（3） ng-model</h3><p>ng-model 指令可以将输入域的值与 AngularJS 创建的变量绑定。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;input ng-model=&apos;name&apos; /&gt;   </div><div class="line">&lt;input value=&quot;&#123;&#123;name&#125;&#125;&quot; /&gt;</div><div class="line">&lt;input ng-model=&apos;name&apos; /&gt;</div><div class="line">&lt;div ng-bind=&quot;name&quot;&gt; &lt;/div&gt;</div></pre></td></tr></table></figure></p>
+<p>运行之后我们发现在第一个input中输入值可以下面三个标签上显示，改变第三个其他三个也会跟着改变，但是改变第二个就只会他自己改变，这也很好解释，因为第二个input只是用来显示name的值，并没有进行双向绑定</p>
+<p>下面我们看看在html中通过ng-model定义的name在js中可不可以访问<br><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">ng-model</span>=<span class="string">'name'</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">value</span>=<span class="string">"&#123;&#123;name&#125;&#125;"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">input</span> <span class="attr">ng-model</span>=<span class="string">'name'</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">ng-bind</span>=<span class="string">"name"</span>&gt;</span> <span class="tag">&lt;/<span class="name">div</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">ng-click</span>=<span class="string">'showevent()'</span>&gt;</span>alert()<span class="tag">&lt;/<span class="name">button</span>&gt;</span></div></pre></td></tr></table></figure></p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">$scope.showevent=<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">  alert($scope.name);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在input中输入一个值，点击按钮，发现浏览器正确的输出了name的值</p>
+<h3 id="（4）-ng-options"><a href="#（4）-ng-options" class="headerlink" title="（4） ng-options"></a>（4） ng-options</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">select</span> <span class="attr">ng-model</span>=<span class="string">'select'</span> <span class="attr">ng-change</span>=<span class="string">'selectchange()'</span> <span class="attr">ng-options</span>=<span class="string">'i.url as i.site for i in sites'</span>&gt;</span></div><div class="line">      <span class="tag">&lt;<span class="name">option</span> <span class="attr">value</span>=<span class="string">""</span>&gt;</span>请选择<span class="tag">&lt;/<span class="name">option</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">select</span>&gt;</span></div></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">$scope.sites = [</div><div class="line">      &#123;<span class="attr">site</span> : <span class="string">"Google"</span>, <span class="attr">url</span> : <span class="string">"http://www.google.com"</span>&#125;,</div><div class="line">      &#123;<span class="attr">site</span> : <span class="string">"Baidu"</span>, <span class="attr">url</span> : <span class="string">"http://www.baidu.com"</span>&#125;,</div><div class="line">      &#123;<span class="attr">site</span> : <span class="string">"Taobao"</span>, <span class="attr">url</span> : <span class="string">"http://www.taobao.com"</span>&#125;</div><div class="line">  ];</div><div class="line">$scope.selectchange=<span class="function"><span class="keyword">function</span>(<span class="params"></span>)</span>&#123;</div><div class="line">    alert($scope.select);</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<p>刷新界面发现select已经正确的显示出来了，我们去改变他，发现浏览器也能正确的输出改变后的值</p>
+<p>在上面使用了<code>ng-change</code>，其实和正常的<code>onchange</code>事件类似，都是在值发生改变时触发</p>
+<h3 id="（5）ng-disabled"><a href="#（5）ng-disabled" class="headerlink" title="（5）ng-disabled"></a>（5）ng-disabled</h3><figure class="highlight html"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">button</span> <span class="attr">ng-disabled</span>=<span class="string">'1'</span> <span class="attr">ng-click</span>=<span class="string">'changeselect()'</span> &gt;</span>changeselect<span class="tag">&lt;/<span class="name">button</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>这个很简单，当他的值为不等于0和false时，angular就会给button加上<code>disabled=&quot;disabled&quot;</code>属性</p>
+<p>当然其他指令还有很多，下次在介绍吧^-^</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/03/28/Javascript 数组操作/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="李续铖">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/lxchead.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李续铖的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2016/03/28/Javascript 数组操作/" itemprop="url">Javascript 数组操作</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-03-28T00:00:00+08:00">
+                2016-03-28
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="1-新建数组"><a href="#1-新建数组" class="headerlink" title="1.新建数组"></a>1.新建数组</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//可以省略new</span></div><div class="line"><span class="keyword">var</span> colors = <span class="keyword">new</span> <span class="built_in">Array</span>();</div><div class="line"><span class="keyword">var</span> colors = <span class="keyword">new</span> <span class="built_in">Array</span>(<span class="number">20</span>);</div><div class="line"><span class="keyword">var</span> colors = <span class="keyword">new</span> <span class="built_in">Array</span>(<span class="string">"red"</span>, <span class="string">"blue"</span>, <span class="string">"green"</span>);</div><div class="line"></div><div class="line"><span class="keyword">var</span> colors = [<span class="string">"red"</span>, <span class="string">"blue"</span>, <span class="string">"green"</span>]; <span class="comment">// 创建一个包含 3 个字符串的数组</span></div><div class="line"><span class="keyword">var</span> names = []; <span class="comment">// 创建一个空数组</span></div></pre></td></tr></table></figure>
+<h3 id="2-检测数组"><a href="#2-检测数组" class="headerlink" title="2.检测数组"></a>2.检测数组</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (value <span class="keyword">instanceof</span> <span class="built_in">Array</span>)&#123;</div><div class="line"><span class="comment">//对数组执行某些操作</span></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">//推荐下面这种方式</span></div><div class="line"><span class="keyword">if</span> (<span class="built_in">Array</span>.isArray(value))&#123;</div><div class="line"><span class="comment">//对数组执行某些操作</span></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="3-栈方法和队列方法"><a href="#3-栈方法和队列方法" class="headerlink" title="3.栈方法和队列方法"></a>3.栈方法和队列方法</h3><blockquote>
+<p>push() 方法可以接收任意数量的参数，把它们逐个添加到数组末尾，并返回修改后数组的长度<br>pop() 方法则从数组末尾移除最后一项，减少数组的 length 值，然后返回移除的项<br>shift() 它能够移除数组中的第一个项并返回该项，同时将数组长度减 1<br>unshift()它能在数组前端添加任意个项并返回新数组的长度<br>例：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">var colors = new Array(); // 创建一个数组</div><div class="line">var count = colors.push(&quot;red&quot;, &quot;green&quot;); // 推入两项</div><div class="line">alert(count); //2</div><div class="line">count = colors.push(&quot;black&quot;); // 推入另一项</div><div class="line">alert(count); //3</div><div class="line">var item = colors.pop(); // 取得最后一项</div><div class="line">alert(item); //&quot;black&quot;</div><div class="line">alert(colors.length); //2</div></pre></td></tr></table></figure></p>
+</blockquote>
+<h3 id="4-转换方法"><a href="#4-转换方法" class="headerlink" title="4.转换方法"></a>4.转换方法</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> colors = [<span class="string">"red"</span>, <span class="string">"blue"</span>, <span class="string">"green"</span>]; <span class="comment">// 创建一个包含 3 个字符串的数组</span></div><div class="line">alert(colors.toString()); <span class="comment">// red,blue,green</span></div><div class="line">alert(colors.valueOf()); <span class="comment">// red,blue,green</span></div><div class="line">alert(colors); <span class="comment">// red,blue,green</span></div></pre></td></tr></table></figure>
+<blockquote>
+<p>alert() 会自动调用toString()方法</p>
+</blockquote>
+<p>例：<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> person1 = &#123;</div><div class="line"><span class="attr">toLocaleString</span> : <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line"><span class="keyword">return</span> <span class="string">"Nikolaos"</span>;</div><div class="line">&#125;,</div><div class="line"><span class="attr">toString</span> : <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line"><span class="keyword">return</span> <span class="string">"Nicholas"</span>;</div><div class="line">&#125;</div><div class="line">&#125;;</div><div class="line"><span class="keyword">var</span> person2 = &#123;</div><div class="line"><span class="attr">toLocaleString</span> : <span class="function"><span class="keyword">function</span> (<span class="params"></span>) </span>&#123;</div><div class="line"><span class="keyword">return</span> <span class="string">"Grigorios"</span>;</div><div class="line">&#125;,</div><div class="line"><span class="attr">toString</span> : <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</div><div class="line"><span class="keyword">return</span> <span class="string">"Greg"</span>;</div><div class="line">&#125;</div><div class="line">&#125;;</div><div class="line"><span class="keyword">var</span> people = [person1, person2];</div><div class="line">alert(people); <span class="comment">//Nicholas,Greg</span></div><div class="line">alert(people.toString()); <span class="comment">//Nicholas,Greg</span></div><div class="line">alert(people.toLocaleString()); <span class="comment">//Nikolaos,Grigorios</span></div></pre></td></tr></table></figure></p>
+<h4 id="join-方法-可以使用不同的分隔符来构建这个字符串"><a href="#join-方法-可以使用不同的分隔符来构建这个字符串" class="headerlink" title="join()方法 可以使用不同的分隔符来构建这个字符串"></a>join()方法 可以使用不同的分隔符来构建这个字符串</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> colors = [<span class="string">"red"</span>, <span class="string">"green"</span>, <span class="string">"blue"</span>];</div><div class="line">alert(colors.join(<span class="string">","</span>)); <span class="comment">//red,green,blue</span></div><div class="line">alert(colors.join(<span class="string">"||"</span>)); <span class="comment">//red||green||blue</span></div></pre></td></tr></table></figure>
+<h3 id="5-排序方法"><a href="#5-排序方法" class="headerlink" title="5.排序方法"></a>5.排序方法</h3><blockquote>
+<p>reverse() 方法会反转数组项的顺序<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ar values = [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>];</div><div class="line">values.reverse();</div><div class="line">alert(values); <span class="comment">//5,4,3,2,1</span></div></pre></td></tr></table></figure></p>
+<p>sort() 方法按升序排列数组项——即最小的值位于最前面，最大的值排在最后面。<br>         为了实现排序， sort() 方法会调用每个数组项的 toString()                  转型方法，然后比较得到的字符串，以确定如何排序。<br>         <b>即使数组中的每一项都是数值， sort() 方法比较的也是字符串</b><br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> values = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">5</span>, <span class="number">10</span>, <span class="number">15</span>];</div><div class="line">values.sort();</div><div class="line">alert(values); <span class="comment">//0,1,10,15,5</span></div></pre></td></tr></table></figure></p>
+</blockquote>
+<p>sort()自定义排序：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">compare</span>(<span class="params">value1, value2</span>) </span>&#123;</div><div class="line">    <span class="keyword">if</span> (value1 &lt; value2) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="number">-1</span>;</div><div class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (value1 &gt; value2) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">var</span> values = [<span class="number">0</span>, <span class="number">1</span>, <span class="number">5</span>, <span class="number">10</span>, <span class="number">15</span>];</div><div class="line">values.sort(compare);</div><div class="line">alert(values); <span class="comment">//0,1,5,10,15</span></div><div class="line"></div><div class="line"><span class="comment">//数值型比较函数</span></div><div class="line"><span class="function"><span class="keyword">function</span> <span class="title">compare</span>(<span class="params">value1, value2</span>)</span>&#123;</div><div class="line">    <span class="keyword">return</span> value2 - value1;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="6-操作方法"><a href="#6-操作方法" class="headerlink" title="6.操作方法"></a>6.操作方法</h3><blockquote>
+<p> concat() 方法可以基于当前数组中的所有项创建一个新数组<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> colors = [<span class="string">"red"</span>, <span class="string">"green"</span>, <span class="string">"blue"</span>];</div><div class="line"><span class="keyword">var</span> colors2 = colors.concat(<span class="string">"yellow"</span>, [<span class="string">"black"</span>, <span class="string">"brown"</span>]);</div><div class="line">alert(colors); <span class="comment">//red,green,blue</span></div><div class="line">alert(colors2); <span class="comment">//red,green,blue,yellow,black,brown</span></div></pre></td></tr></table></figure></p>
+<p> slice() 它能够基于当前数组中的一或多个项创建一个新数组。<br>slice() 方法可以接受一或两个参数，即要返回项的起始和结束位置<br>在只有一个参数的情况下， slice() 方法返回从该<br>参数指定位置开始到当前数组末尾的所有项。如果有两个参数，该方法返回起始和结束位置之间的项—但不包括结束位置的项<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> colors = [<span class="string">"red"</span>, <span class="string">"green"</span>, <span class="string">"blue"</span>, <span class="string">"yellow"</span>, <span class="string">"purple"</span>];</div><div class="line"><span class="keyword">var</span> colors2 = colors.slice(<span class="number">1</span>);</div><div class="line"><span class="keyword">var</span> colors3 = colors.slice(<span class="number">1</span>,<span class="number">4</span>);</div><div class="line">alert(colors2); <span class="comment">//green,blue,yellow,purple</span></div><div class="line">alert(colors3); <span class="comment">//green,blue,yellow</span></div></pre></td></tr></table></figure></p>
+<p><b>splice() 方法，这个方法恐怕要算是最强大的数组方法了，它有很多种用。<br>splice() 的主要用途是向数组的中部插入项，但使用这种方法的方式则有如下 3 种</b><br><b>删除</b>：可以删除任意数量的项，只需指定 2 个参数：要删除的第一项的位置和要删除的项数。<br>例如， splice(0,2) 会删除数组中的前两项。<br><b>插入</b>：可以向指定位置插入任意数量的项，只需提供 3 个参数：起始位置、0（要删除的项数）<br>和要插入的项。如果要插入多个项，可以再传入第四、第五，以至任意多个项。例如，<br>splice(2,0,”red”,”green”) 会从当前数组的位置 2 开始插入字符串 “red” 和 “green” 。<br><b>替换</b>：可以向指定位置插入任意数量的项，且同时删除任意数量的项，只需指定 3 个参数：起始位置、要删除的项数和要插入的任意数量的项。插入的项数不必与删除的项数相等。例如，<br>splice (2,1,”red”,”green”) 会删除当前数组位置 2 的项，然后再从位置 2 开始插入字符串”red” 和 “green” 。<br>splice() 方法始终都会返回一个数组，该数组中包含从原始数组中删除的项（如果没有删除任何项，则返回一个空数组） 。下面的代码展示了上述 3 种使用 splice() 方法的方式<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> colors = [<span class="string">"red"</span>, <span class="string">"green"</span>, <span class="string">"blue"</span>];</div><div class="line"><span class="keyword">var</span> removed = colors.splice(<span class="number">0</span>,<span class="number">1</span>); <span class="comment">// 删除第一项</span></div><div class="line">alert(colors); <span class="comment">// green,blue</span></div><div class="line">alert(removed); <span class="comment">// red，返回的数组中只包含一项</span></div><div class="line">removed = colors.splice(<span class="number">1</span>, <span class="number">0</span>, <span class="string">"yellow"</span>, <span class="string">"orange"</span>); <span class="comment">// 从位置 1 开始插入两项</span></div><div class="line">alert(colors); <span class="comment">// green,yellow,orange,blue</span></div><div class="line">alert(removed); <span class="comment">// 返回的是一个空数组</span></div><div class="line">removed = colors.splice(<span class="number">1</span>, <span class="number">1</span>, <span class="string">"red"</span>, <span class="string">"purple"</span>); <span class="comment">// 插入两项，删除一项</span></div><div class="line">alert(colors); <span class="comment">// green,red,purple,orange,blue</span></div><div class="line">alert(removed); <span class="comment">// yellow，返回的数组中只包含一项</span></div></pre></td></tr></table></figure></p>
+</blockquote>
+<h3 id="7-位置方法"><a href="#7-位置方法" class="headerlink" title="7.位置方法"></a>7.位置方法</h3><blockquote>
+<p> indexOf() 和 lastIndexOf() 。这两个方法都接收两个参数：要查找的项和（可选的）表示查找起点位置的索引。其中，indexOf() 方法从数组的开头（位置0）开始向后查找，lastIndexOf() 方法则从数组的末尾开始向前查找<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> numbers = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">4</span>,<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>];</div><div class="line">alert(numbers.indexOf(<span class="number">4</span>)); <span class="comment">//3</span></div><div class="line">alert(numbers.lastIndexOf(<span class="number">4</span>)); <span class="comment">//5</span></div><div class="line">alert(numbers.indexOf(<span class="number">4</span>, <span class="number">4</span>)); <span class="comment">//5</span></div><div class="line">alert(numbers.lastIndexOf(<span class="number">4</span>, <span class="number">4</span>)); <span class="comment">//3</span></div><div class="line"><span class="keyword">var</span> person = &#123; <span class="attr">name</span>: <span class="string">"Nicholas"</span> &#125;;</div><div class="line"><span class="keyword">var</span> people = [&#123; <span class="attr">name</span>: <span class="string">"Nicholas"</span> &#125;];</div><div class="line"><span class="keyword">var</span> morePeople = [person];</div><div class="line">alert(people.indexOf(person)); <span class="comment">//-1</span></div><div class="line">alert(morePeople.indexOf(person)); <span class="comment">//0</span></div></pre></td></tr></table></figure></p>
+</blockquote>
+<h3 id="8-迭代方法"><a href="#8-迭代方法" class="headerlink" title="8.迭代方法"></a>8.迭代方法</h3><blockquote>
+<p>every() ：对数组中的每一项运行给定函数，如果该函数对每一项都返回           true，则返回 true 。</p>
+<p>filter() ：对数组中的每一项运行给定函数，返回该函数会返回 true 的项组成的数组。</p>
+<p>forEach() ：对数组中的每一项运行给定函数。这个方法没有返回值。</p>
+<p>map() ：对数组中的每一项运行给定函数，返回每次函数调用的结果组成的数组</p>
+<p>some() ：对数组中的每一项运行给定函数，如果该函数对任一项返回 true ，则返回 true 。</p>
+</blockquote>
+<p> every() 和 some() ，它们都用于查询数组中的项是否满足某个条件<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> numbers = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">4</span>,<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>];</div><div class="line"><span class="keyword">var</span> everyResult = numbers.every(<span class="function"><span class="keyword">function</span>(<span class="params">item, index, array</span>)</span>&#123;</div><div class="line"><span class="keyword">return</span> (item &gt; <span class="number">2</span>);</div><div class="line">&#125;);</div><div class="line">alert(everyResult); <span class="comment">//false</span></div><div class="line"><span class="keyword">var</span> someResult = numbers.some(<span class="function"><span class="keyword">function</span>(<span class="params">item, index, array</span>)</span>&#123;</div><div class="line"><span class="keyword">return</span> (item &gt; <span class="number">2</span>);</div><div class="line">&#125;);</div><div class="line">alert(someResult); <span class="comment">//true</span></div></pre></td></tr></table></figure></p>
+<p>filter() 它利用指定的函数确定是否在返回的数组中包含某一项</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> numbers = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">4</span>,<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>];</div><div class="line"><span class="keyword">var</span> filterResult = numbers.filter(<span class="function"><span class="keyword">function</span>(<span class="params">item, index, array</span>)</span>&#123;</div><div class="line"><span class="keyword">return</span> (item &gt; <span class="number">2</span>);</div><div class="line">&#125;);</div><div class="line">alert(filterResult); <span class="comment">//[3,4,5,4,3]</span></div></pre></td></tr></table></figure>
+<p>map() 也返回一个数组，而这个数组的每一项都是在原始数组中的对应项上运行传入函数的结果<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> numbers = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">4</span>,<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>];</div><div class="line"><span class="keyword">var</span> mapResult = numbers.map(<span class="function"><span class="keyword">function</span>(<span class="params">item, index, array</span>)</span>&#123;</div><div class="line"><span class="keyword">return</span> item * <span class="number">2</span>;</div><div class="line">&#125;);</div><div class="line">alert(mapResult); <span class="comment">//[2,4,6,8,10,8,6,4,2]</span></div></pre></td></tr></table></figure></p>
+<p> forEach() ，它只是对数组中的每一项运行传入的函数。这个方法没有返回值，<br>本质上与使用 for 循环迭代数组一样<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">var</span> numbers = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>,<span class="number">4</span>,<span class="number">3</span>,<span class="number">2</span>,<span class="number">1</span>];</div><div class="line">numbers.forEach(<span class="function"><span class="keyword">function</span>(<span class="params">item, index, array</span>)</span>&#123;</div><div class="line"><span class="comment">//执行某些操作</span></div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
+<h3 id="9-归并方法"><a href="#9-归并方法" class="headerlink" title="9.归并方法"></a>9.归并方法</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//使用 reduce() 方法可以执行求数组中所有值之和的操作，比如：</span></div><div class="line"><span class="keyword">var</span> values = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>];</div><div class="line"><span class="keyword">var</span> sum = values.reduce(<span class="function"><span class="keyword">function</span>(<span class="params">prev, cur, index, array</span>)</span>&#123;</div><div class="line"><span class="keyword">return</span> prev + cur;</div><div class="line">&#125;);</div><div class="line">alert(sum); <span class="comment">//15</span></div><div class="line"><span class="comment">//reduceRight() 的作用类似，只不过方向相反而已。来看下面这个例子。</span></div><div class="line"><span class="keyword">var</span> values = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>,<span class="number">4</span>,<span class="number">5</span>];</div><div class="line"><span class="keyword">var</span> sum = values.reduceRight(<span class="function"><span class="keyword">function</span>(<span class="params">prev, cur, index, array</span>)</span>&#123;</div><div class="line"><span class="keyword">return</span> prev + cur;</div><div class="line">&#125;);</div><div class="line">alert(sum); <span class="comment">//15</span></div></pre></td></tr></table></figure>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/03/17/js 原型方法 类方法 对象方法/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -539,6 +1656,185 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
 
     
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/02/17/常用dom操作(转)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="李续铖">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/lxchead.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李续铖的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2016/02/17/常用dom操作(转)/" itemprop="url">常用dom操作(转)</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-02-17T00:00:00+08:00">
+                2016-02-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="创建元素"><a href="#创建元素" class="headerlink" title="创建元素"></a>创建元素</h4><p>让我们从创建HTML标签开始，我们可以通过<a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement" target="_blank" rel="external">document.createElement(tagName)</a>方法来创建，如下所示：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">const h1 = document.createElement(&apos;h1&apos;)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">// &lt;h1&gt;&lt;/h1&gt;</div></pre></td></tr></table></figure>
+<h4 id="文本"><a href="#文本" class="headerlink" title="文本"></a>文本</h4><p>HTML标签如果没有内容的话是一个空的标签，我们可以使用<a href="https://developer.mozilla.org/en-US/docs/Web/API/Node/textContent" target="_blank" rel="external">element.textContent</a>来增加一些文本：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">h1.textContent = &apos;Hello world!&apos;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">// &lt;h1&gt;Hello world!&lt;/h1&gt;</div></pre></td></tr></table></figure>
+<h4 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h4><p>可以通过<a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/setAttribute" target="_blank" rel="external">element.setAttribute(name, value)</a>方法来操作属性：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">h1.setAttribute(&apos;class&apos;, &apos;hello&apos;)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">// &lt;h1 class=&quot;hello&quot;&gt;Hello world!&lt;/h1&gt;</div></pre></td></tr></table></figure>
+<p>通过 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/className" target="_blank" rel="external">element.className</a> 可以操作类：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">h1.className = &apos;hello&apos;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">// &lt;h1 class=&quot;hello&quot;&gt;Hello world!&lt;/h1&gt;</div></pre></td></tr></table></figure>
+<p><strong>但是使用</strong> <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/classList" target="_blank" rel="external"><strong>classList</strong></a><strong>是一种更好的方式:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">h1.classList.add(&apos;hello&apos;)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">// &lt;h1 class=&quot;hello&quot;&gt;Hello world!&lt;/h1&gt;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">h1.classList.remove(&apos;hello&apos;)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">// &lt;h1&gt;Hello world!&lt;/h1&gt;</div></pre></td></tr></table></figure>
+<p>标签的ID可以通过属性操作或是 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/id" target="_blank" rel="external">id相关api</a>来操作:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">h1.setAttribute(&apos;id&apos;, &apos;hello-world&apos;)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">h1.id = &apos;hello-world&apos;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">// &lt;h1 id=&quot;hello-world&quot; class=&quot;hello&quot;&gt;Hello world!&lt;/h1&gt;</div></pre></td></tr></table></figure>
+<blockquote>
+<p><strong> 如果你不确定使用attributes 还是 properties操作，那么就直接使用attributes操作-除了像标签的 value、checked等值</strong>.</p>
+</blockquote>
+<p>记住你不能用 element.setAttribute(someBoolean, false) 来更改布尔属性值,但是可以使用其他的方法来代替:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">input.checked = true</div><div class="line">// &lt;input checked&gt;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">input.checked = false</div><div class="line">// &lt;input&gt;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">input.setAttribute(‘checked’, ‘’)</div><div class="line">// &lt;input checked&gt;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">input.removeAttribute(&apos;checked&apos;)</div><div class="line">// &lt;input&gt;</div></pre></td></tr></table></figure>
+<h4 id="在一个标签之后附加标签元素"><a href="#在一个标签之后附加标签元素" class="headerlink" title="在一个标签之后附加标签元素"></a>在一个标签之后附加标签元素</h4><p>如何在标签元素之后插入标签呢?我们可以通过 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Node/appendChild" target="_blank" rel="external">parent.appendChild(child)</a>来完成:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">document.body.appendChild(h1)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">// &lt;body&gt;&lt;h1&gt;Hello world!&lt;/h1&gt;&lt;/body&gt;</div></pre></td></tr></table></figure>
+<h4 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h4><p>可以通过 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Node/removeChild" target="_blank" rel="external">parent.removeChild(child)</a>来删除一个标签元素:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">document.body.removeChild(h1)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">// &lt;body&gt;&lt;/body&gt;</div></pre></td></tr></table></figure>
+<h4 id="查找"><a href="#查找" class="headerlink" title="查找"></a>查找</h4><p>下面的这些API都可以实现查找功能：</p>
+<ul>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Document/getElementById" target="_blank" rel="external">document.getElementById(id)</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/ParentNode/children" target="_blank" rel="external">element.childNodes[i]</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Node/firstChild" target="_blank" rel="external">element.firstChild</a> === element.childNodes[0]</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Node/lastChild" target="_blank" rel="external">element.lastChild</a> === element.childNodes[element.childNodes.length - 1]</li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/getElementsByTagName" target="_blank" rel="external">element.getElementsByTagName(tagName)</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/getElementsByClassName" target="_blank" rel="external">element.getElementsByClassName(className)</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelector" target="_blank" rel="external">element.querySelector(query)</a></li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Web/API/Element/querySelectorAll" target="_blank" rel="external">element.querySelectorAll(query)</a></li>
+</ul>
+<p>注意，getElementsByTagName, getElementsByClassName 和 querySelectorAll 返回的不是数组而是一个<a href="https://developer.mozilla.org/en-US/docs/Web/API/NodeList" target="_blank" rel="external">NodeList对象</a>, 所以不能直接使用数组操作. <a href="https://developer.mozilla.org/en-US/docs/Web/API/NodeList#Workarounds" target="_blank" rel="external">这里有一些帮助你使用数组操作的方法</a>.</p>
+<h4 id="在两个标签直接插入元素"><a href="#在两个标签直接插入元素" class="headerlink" title="在两个标签直接插入元素"></a>在两个标签直接插入元素</h4><p>如何在两一个标签之前插入一个元素呢？可以通过 <a href="https://developer.mozilla.org/en-US/docs/Web/API/Node/insertBefore" target="_blank" rel="external">parent.insertBefore(child, before)</a> 来实现!</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">/*</div><div class="line"> *  &lt;body&gt;</div><div class="line"> *    &lt;script src=&quot;main.js&quot;&gt;&lt;/script&gt;</div><div class="line"> *  &lt;/body&gt;</div><div class="line"> */</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">document.body.insertBefore(h1, document.body.firstChild)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">/*  &lt;body&gt;</div><div class="line"> *    &lt;h1&gt;Hello world!&lt;/h1&gt;</div><div class="line"> *    &lt;script src=&quot;main.js&quot;&gt;&lt;/script&gt;</div><div class="line"> *  &lt;/body&gt;</div><div class="line"> */</div></pre></td></tr></table></figure>
+<h4 id="创建标签列表"><a href="#创建标签列表" class="headerlink" title="创建标签列表"></a>创建标签列表</h4><p>当有许多数据的时候，我们可以动态的创建标签：</p>
+<p><a href="https://cdn.embedly.com/widgets/media.html?src=https%3A%2F%2Fjsfiddle.net%2Fpakastin%2Fpkb1yww7%2Fembedded%2F&amp;url=https%3A%2F%2Fjsfiddle.net%2Fpakastin%2Fpkb1yww7%2F&amp;image=https%3A%2F%2Fwww.gravatar.com%2Favatar%2F46846cd7fc5658dbae2c7a8998b394dc%2F%3Fdefault%3D%26s%3D80&amp;key=d04bfffea46d4aeda930ec88cc64b87c&amp;type=text%2Fhtml&amp;schema=jsfiddle" target="_blank" rel="external">点击查看</a></p>
+<h4 id="更新列表数据"><a href="#更新列表数据" class="headerlink" title="更新列表数据"></a>更新列表数据</h4><p>下面我们来看如何更新列表：<br><a href="https://cdn.embedly.com/widgets/media.html?url=https%3A%2F%2Fjsfiddle.net%2Fpakastin%2Fxk5bt9p8%2Fembed%2Fjs%2Cresult%2F&amp;src=https%3A%2F%2Fjsfiddle.net%2Fpakastin%2Fxk5bt9p8%2Fembedded%2F&amp;type=text%2Fhtml&amp;key=d04bfffea46d4aeda930ec88cc64b87c&amp;schema=jsfiddle" target="_blank" rel="external">点击查看</a></p>
+<p>这里做了什么呢？主要做了两件事：</p>
+<p>1.通过一个隐藏元素来查找子元素<br>通过使用_lookup我们可以使用已经存在的元素然后更新它们。<br>2.setChildren(parent, children)方法可以让你设置一个子元素列表，他会智能的比较已存在的子元素并将函数中提供的子元素合并进去。</p>
+<p>你也可以使用 setChildren 来挂载或卸载子元素：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">setChildren(login, [</div><div class="line">  email,</div><div class="line">  !forgot &amp;&amp; pass</div><div class="line">])</div></pre></td></tr></table></figure>
+<h4 id="RE-DOM"><a href="#RE-DOM" class="headerlink" title="RE:DOM"></a>RE:DOM</h4><p>这是我所编写的一个微型dom库，你可以在这里了解关于<a href="https://redom.js.org" target="_blank" rel="external">RE:DOM</a>的一切。</p>
+<p>1.通过redom会更容易创建DOM元素相比于<a href="https://github.com/pakastin/redom/blob/master/src/el.js" target="_blank" rel="external">el(query, …attributes/properties/text/children)</a>等方法。<br>2.你可以自己定义视图并决定如何更新它们，浏览器会自动的更新对应的DOM。<br>3.redom的<a href="https://github.com/pakastin/redom/blob/master/src/list.js" target="_blank" rel="external">list(parent, View, id, initData)</a>让你非常容易的实现dom数据的同步。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">import &#123; el, text, mount &#125; from &apos;redom&apos;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">class Hello &#123;</div><div class="line">  constructor () &#123;</div><div class="line">    this.el = el(&apos;h1.hello&apos;, </div><div class="line">      &#123; onclick: e =&gt; this.onclick(e) &#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">     &apos;Hello &apos;,</div><div class="line">      this.target = text(&apos;world&apos;),</div><div class="line">      &apos;!&apos;</div><div class="line">    )</div><div class="line">  &#125;</div><div class="line">  update (data) &#123;</div><div class="line">    this.target.textContent = data</div><div class="line">  &#125;</div><div class="line">  onclick (e) &#123;</div><div class="line">    console.log(&apos;clicked &apos;, this)</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">const hello = new Hello()</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mount(document.body, hello)</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">hello.update(&apos;you&apos;)</div></pre></td></tr></table></figure>
+<p>lists方法的示例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">import &#123; el, list, mount &#125; from &apos;redom&apos;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">class Td &#123;</div><div class="line">  constructor () &#123;</div><div class="line">    this.el = el(&apos;td&apos;)</div><div class="line">  &#125;</div><div class="line">  update (data) &#123;</div><div class="line">    this.el.textContent = data</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">const Tr = list.extend(&apos;tr&apos;, Td)</div><div class="line">const Table = list.extend(&apos;table&apos;, Tr)</div><div class="line"></div><div class="line">const table = new Table</div><div class="line"></div><div class="line">mount(document.body, table)</div><div class="line"></div><div class="line">table.update([</div><div class="line">  [ 1, 2, 3 ],</div><div class="line">  [ 4, 5, 6 ],</div><div class="line">  [ 7, 8, 9 ]</div><div class="line">])</div></pre></td></tr></table></figure>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
   </section>
 
   
@@ -588,7 +1884,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">20</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -599,7 +1895,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">4</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -610,7 +1906,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>

@@ -77,7 +77,7 @@
 <link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="JavaScript,GraphQL," />
+  <meta name="keywords" content="Docker," />
 
 
 
@@ -93,17 +93,17 @@
 
 
 
-<meta name="description" content="1. 什么是GraphQL？ A query language for your API  官网给他的定义是一门API的查询语言。他会给你API中的数据一份完整的描述，这样客户端就可以根据这份描述来确定他具体需要什么。下面总结一下他的特点：  根据需要查询数据。客户端可以发送一个GraphQL到服务端API，只获取客户端想要的数据。查询总是会返回预测的结果，说白了就是你想要什么就会拿到什么（前提是">
-<meta name="keywords" content="JavaScript,GraphQL">
+<meta name="description" content="需要提前安装node，mongo镜像  1. 构建node应用在node应用根目录下新建Dockerfile文件，内容如下123456789101112131415161718FROM node# 创建工作目录RUN mkdir /appWORKDIR /app# 复制项目文件COPY . /app# 声明暴露端口EXPOSE 8000# 安装包RUN [ &amp;quot;rm&amp;quot;, &amp;qu">
+<meta name="keywords" content="Docker">
 <meta property="og:type" content="article">
-<meta property="og:title" content="graphQL学习（一）">
-<meta property="og:url" content="http://yoursite.com/2017/07/30/graphQL学习（一）/index.html">
+<meta property="og:title" content="使用Docker部署nodeJS+MongoDB应用">
+<meta property="og:url" content="http://yoursite.com/2017/07/18/使用Docker部署nodeJS+MongoDB应用/index.html">
 <meta property="og:site_name" content="李续铖的博客">
-<meta property="og:description" content="1. 什么是GraphQL？ A query language for your API  官网给他的定义是一门API的查询语言。他会给你API中的数据一份完整的描述，这样客户端就可以根据这份描述来确定他具体需要什么。下面总结一下他的特点：  根据需要查询数据。客户端可以发送一个GraphQL到服务端API，只获取客户端想要的数据。查询总是会返回预测的结果，说白了就是你想要什么就会拿到什么（前提是">
-<meta property="og:updated_time" content="2017-07-30T15:47:46.000Z">
+<meta property="og:description" content="需要提前安装node，mongo镜像  1. 构建node应用在node应用根目录下新建Dockerfile文件，内容如下123456789101112131415161718FROM node# 创建工作目录RUN mkdir /appWORKDIR /app# 复制项目文件COPY . /app# 声明暴露端口EXPOSE 8000# 安装包RUN [ &amp;quot;rm&amp;quot;, &amp;qu">
+<meta property="og:updated_time" content="2017-08-10T08:13:04.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="graphQL学习（一）">
-<meta name="twitter:description" content="1. 什么是GraphQL？ A query language for your API  官网给他的定义是一门API的查询语言。他会给你API中的数据一份完整的描述，这样客户端就可以根据这份描述来确定他具体需要什么。下面总结一下他的特点：  根据需要查询数据。客户端可以发送一个GraphQL到服务端API，只获取客户端想要的数据。查询总是会返回预测的结果，说白了就是你想要什么就会拿到什么（前提是">
+<meta name="twitter:title" content="使用Docker部署nodeJS+MongoDB应用">
+<meta name="twitter:description" content="需要提前安装node，mongo镜像  1. 构建node应用在node应用根目录下新建Dockerfile文件，内容如下123456789101112131415161718FROM node# 创建工作目录RUN mkdir /appWORKDIR /app# 复制项目文件COPY . /app# 声明暴露端口EXPOSE 8000# 安装包RUN [ &amp;quot;rm&amp;quot;, &amp;qu">
 
 
 
@@ -131,7 +131,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/07/30/graphQL学习（一）/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/07/18/使用Docker部署nodeJS+MongoDB应用/"/>
 
 
 
@@ -144,7 +144,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <!-- End Google Tag Manager -->
 
 
-  <title>graphQL学习（一） | 李续铖的博客</title>
+  <title>使用Docker部署nodeJS+MongoDB应用 | 李续铖的博客</title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -297,7 +297,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/30/graphQL学习（一）/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/18/使用Docker部署nodeJS+MongoDB应用/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="李续铖">
@@ -314,7 +314,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
         
         
-          <h1 class="post-title" itemprop="name headline">graphQL学习（一）</h1>
+          <h1 class="post-title" itemprop="name headline">使用Docker部署nodeJS+MongoDB应用</h1>
         
 
         <div class="post-meta">
@@ -326,8 +326,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-30T00:00:00+08:00">
-                2017-07-30
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-18T00:00:00+08:00">
+                2017-07-18
               </time>
             
 
@@ -349,8 +349,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/后端/" itemprop="url" rel="index">
-                    <span itemprop="name">后端</span>
+                  <a href="/categories/运维/" itemprop="url" rel="index">
+                    <span itemprop="name">运维</span>
                   </a>
                 </span>
 
@@ -383,37 +383,28 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       
 
       
-        <h2 id="1-什么是GraphQL？"><a href="#1-什么是GraphQL？" class="headerlink" title="1. 什么是GraphQL？"></a>1. 什么是GraphQL？</h2><blockquote>
-<p>A query language for your API</p>
+        <blockquote>
+<p>需要提前安装node，mongo镜像</p>
 </blockquote>
-<p>官网给他的定义是一门API的查询语言。他会给你API中的数据一份完整的描述，这样客户端就可以根据这份描述来确定他具体需要什么。下面总结一下他的特点：</p>
-<ol>
-<li><strong>根据需要查询数据</strong>。客户端可以发送一个GraphQL到服务端API，只获取客户端想要的数据。查询总是会返回预测的结果，说白了就是你想要什么就会拿到什么（前提是API有想要的数据）。</li>
-<li><strong>在一份请求中获取多种数据</strong>。GraphQL不只是会访问某一种资源，还可以访问数据之间的引用，即使这些数据后端需要从多个URL加载，这个速度也是非常快的。</li>
-<li><strong>使用类型系统描述什么是可以获取的</strong>。GraphQL API根据类型和字段进行组织。使用类型来确保客户端只会获取肯能的内容，并且会提供很明确的错误反馈。避免了服务端手动对请求数据进行解析。</li>
-<li><strong>强大的开发工具</strong>。这个也是我非常喜欢的一点，可以很直观的知道可以从服务端获取哪些数据，数据结构是怎样的，并且还会有每个字段的描述，简直比开发文档还要方便。</li>
-</ol>
-<hr>
-<p>既然他是一个这么好的东西，现在都有谁在用呢，靠谱么？</p>
-<p>由于它是由Facebook提出的，所以从2012年开始Facebook的移动应用就已经开始使用GrqphQL了。而且现在Github的API v4也已经使用了GraphQL。目前该项已经技术比较成熟，可以在项目中进行使用了。</p>
-<h2 id="2-项目搭建"><a href="#2-项目搭建" class="headerlink" title="2. 项目搭建"></a>2. 项目搭建</h2><p>本项目的目的是搭建一个由GraphQL建立的服务端，并且提供查询工具。</p>
-<h3 id="2-1-技术选择"><a href="#2-1-技术选择" class="headerlink" title="2.1 技术选择"></a>2.1 技术选择</h3><p>主要的就下面几个</p>
-<p><code>Koa</code> <code>GraphQL</code> <code>TypeScript</code> <code>GraphiQL</code>  </p>
-<p>还有几个工具库</p>
-<p><code>graphql-relay</code> <code>koa-graphiql</code> <code>koa-graphql</code> <code>superagent</code> </p>
-<h3 id="2-2-搭建"><a href="#2-2-搭建" class="headerlink" title="2.2 搭建"></a>2.2 搭建</h3><p>服务端基础搭建就不做介绍了，就是使用koa + TypeScript搭建了一个简单的服务器。<br>由于GeaphQL是基于类型和字段的，那么先对数据进行类型定义吧。</p>
-<p>先简单的来一个<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">user.ts</div><div class="line"></div><div class="line">const GQUser = new GraphQLObjectType(&#123;</div><div class="line">  name: &apos;GQUser&apos;,</div><div class="line">  fields: &#123;</div><div class="line">    name: &#123;</div><div class="line">      type: GraphQLString,</div><div class="line">      resolve(user) &#123;</div><div class="line">        return user.name;</div><div class="line">      &#125;,</div><div class="line">    &#125;,</div><div class="line">    age: &#123;</div><div class="line">      type: GraphQLInt,</div><div class="line">      resolve() &#123;</div><div class="line">        return 22</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure></p>
-<p>在这里name就是定义的类型名字，fields就是他所具备的字段，当然每个字段也有自己的类型，resolve函数反回的是这个字段最终的值。它的参数来自使用它的类型的resolve返回，具体下面介绍。</p>
-<p>类型定义完成后就可以使用这个类型了，<br>首先定义查询入口</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div></pre></td><td class="code"><pre><div class="line">schema.ts</div><div class="line"></div><div class="line">class User &#123;</div><div class="line">  public name: string;</div><div class="line">  public age: number;</div><div class="line">  constructor() &#123;</div><div class="line">      this.name = &apos;lxc&apos;;</div><div class="line">      this.age = 22;</div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">const Query = new GraphQLObjectType(&#123;</div><div class="line">  name: &apos;Query&apos;,</div><div class="line">  fields: () =&gt; (&#123;</div><div class="line">    user: &#123;</div><div class="line">      type: GQUser,</div><div class="line">      description: &apos;用户&apos;,</div><div class="line">      resolve: async () =&gt; &#123;</div><div class="line">        return new User();</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;)</div><div class="line">&#125;);</div><div class="line"></div><div class="line">export default new GraphQLSchema(&#123;</div><div class="line">  query: Query,</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<p>发现这里也有一个类型：query，这是每个GraphQL都会有的一个类型，他和其他类型没有什么区别，唯一特殊的是它是程序查询的入口。<br>我在这里给query类型添加了一个叫user的字段,它的类型是我们上面定义的GQUser，同时他的resolve函数返回了一个User对象，那么这个返回的对象就会传给GQUser的的resolve函数。</p>
-<p>下面就是建立GraphQL服务了，由于使用了<code>koa-graphql</code> ，这个过程非常简单</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">const graphqlHTTP = require(&apos;koa-graphql&apos;);</div><div class="line"></div><div class="line">router.all(&apos;/graphql&apos;, graphqlHTTP(&#123;</div><div class="line">  schema,</div><div class="line">  graphiql: true,</div><div class="line">&#125;));</div></pre></td></tr></table></figure>
-<p>这样就搭建了一个GraphQL的服务，同时为了方便用户查询数据结构和描述，这里使用了<code>GraphiQL</code>开发工具。</p>
-<h3 id="2-3-查询"><a href="#2-3-查询" class="headerlink" title="2.3 查询"></a>2.3 查询</h3><p>查询数据<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">query&#123;</div><div class="line">  user &#123;</div><div class="line">    name</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>获得结果是</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;data&quot;: &#123;</div><div class="line">    &quot;user&quot;: &#123;</div><div class="line">      &quot;name&quot;: &quot;lxc&quot;,</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这里就会发现，我在这里只希望拿到user的name属性，服务端返回的也是只有name属性，并没有多返回什么东西。我想要拿什么就可以在查询语句中改什么，并不需要对服务端的代码进行任何的改动，无形中降低了很多开发量，减少了很多沟通，提高了开发的速度和效率。</p>
+<h3 id="1-构建node应用"><a href="#1-构建node应用" class="headerlink" title="1. 构建node应用"></a>1. 构建node应用</h3><p>在node应用根目录下新建Dockerfile文件，内容如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">FROM node</div><div class="line"></div><div class="line"># 创建工作目录</div><div class="line">RUN mkdir /app</div><div class="line">WORKDIR /app</div><div class="line"></div><div class="line"># 复制项目文件</div><div class="line">COPY . /app</div><div class="line"></div><div class="line"># 声明暴露端口</div><div class="line">EXPOSE 8000</div><div class="line"></div><div class="line"># 安装包</div><div class="line">RUN [ &quot;rm&quot;, &quot;-rf&quot;, &quot;node_modules&quot;]</div><div class="line">RUN [ &quot;npm&quot;, &quot;install&quot;]</div><div class="line"></div><div class="line"># 启动应用</div><div class="line">CMD [ &quot;npm&quot;, &quot;run&quot;, &quot;s&quot;]</div></pre></td></tr></table></figure></p>
+<p>修改node应用连接数据库方式<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">// mongoDB下面会介绍</div><div class="line">mongoose.connect(&apos;mongodb://mongoDB/lp-platform&apos;);</div></pre></td></tr></table></figure></p>
+<p>开始构建</p>
+<blockquote>
+<p>$ docker build -t learn-app:v1 .</p>
+</blockquote>
+<h3 id="2-启动mongoDB容器"><a href="#2-启动mongoDB容器" class="headerlink" title="2. 启动mongoDB容器"></a>2. 启动mongoDB容器</h3><blockquote>
+<p>$ docker run -it –name mongodb mongo</p>
+</blockquote>
+<p> &nbsp;后台运行 </p>
+<blockquote>
+<p>$ docker run -d –name mongodb mongo</p>
+</blockquote>
+<h3 id="3-启动node应用容器"><a href="#3-启动node应用容器" class="headerlink" title="3. 启动node应用容器"></a>3. 启动node应用容器</h3><blockquote>
+<p>$ docker run -it -p <strong>8000:8000</strong> –name learn-app –link mongodb:<strong>mongoDB</strong>  learn-app:v1</p>
+</blockquote>
+<p><strong>需要注意的是这里的 link 命令的作用是连接node容器和mango数据库容器，这样在node应用中就可以使用mongoDB来连接数据库</strong></p>
+<h3 id="4-完成"><a href="#4-完成" class="headerlink" title="4. 完成"></a>4. 完成</h3><p>容器启动完成之后就可以在浏览器中访问了，这里记录一下我遇见的一个问题：</p>
+<p>容器启动完成之后，通过curl命令是可以正常访问node<br>APP，但是在浏览器中并不能访问，一直加载中，尝试了很多方法之后发现重启浏览器可以解决。。。。。。。。。</p>
 
       
     </div>
@@ -443,9 +434,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       
         <div class="post-tags">
           
-            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
-          
-            <a href="/tags/GraphQL/" rel="tag"># GraphQL</a>
+            <a href="/tags/Docker/" rel="tag"># Docker</a>
           
         </div>
       
@@ -458,8 +447,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/07/17/React Native 界面跳转/" rel="next" title="React Native 界面跳转">
-                <i class="fa fa-chevron-left"></i> React Native 界面跳转
+              <a href="/2017/07/18/Docker 命令记录/" rel="next" title="Docker 命令记录">
+                <i class="fa fa-chevron-left"></i> Docker 命令记录
               </a>
             
           </div>
@@ -468,8 +457,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/07/30/graphQL学习（二）/" rel="prev" title="graphQL学习（二）">
-                graphQL学习（二） <i class="fa fa-chevron-right"></i>
+              <a href="/2017/07/30/graphQL入门基础（一）/" rel="prev" title="graphQL入门基础（一）">
+                graphQL入门基础（一） <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -550,7 +539,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">20</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -561,7 +550,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-count">4</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -572,7 +561,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -636,7 +625,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-什么是GraphQL？"><span class="nav-number">1.</span> <span class="nav-text">1. 什么是GraphQL？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-项目搭建"><span class="nav-number">2.</span> <span class="nav-text">2. 项目搭建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-技术选择"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 技术选择</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-搭建"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 搭建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-查询"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 查询</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-构建node应用"><span class="nav-number">1.</span> <span class="nav-text">1. 构建node应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-启动mongoDB容器"><span class="nav-number">2.</span> <span class="nav-text">2. 启动mongoDB容器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-启动node应用容器"><span class="nav-number">3.</span> <span class="nav-text">3. 启动node应用容器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-完成"><span class="nav-number">4.</span> <span class="nav-text">4. 完成</span></a></li></ol></div>
             
 
           </div>

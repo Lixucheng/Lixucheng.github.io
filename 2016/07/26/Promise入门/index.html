@@ -1,0 +1,819 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="JavaScript," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.1" />
+
+
+
+
+
+
+<meta name="description" content="1 什么是Promisepromise是一种异步编程的解决方案，因为正常写回调很不直观，嵌套多了之后简直令人崩溃，所以有了promise这个东西。ES6则是将promise进行了统一，提供了原生的promise对象。 2 基本用法12345678var promise = new Promise(function(resolve, reject) &amp;#123;    setTimeout(func">
+<meta name="keywords" content="JavaScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Promise入门">
+<meta property="og:url" content="http://yoursite.com/2016/07/26/Promise入门/index.html">
+<meta property="og:site_name" content="李续铖的博客">
+<meta property="og:description" content="1 什么是Promisepromise是一种异步编程的解决方案，因为正常写回调很不直观，嵌套多了之后简直令人崩溃，所以有了promise这个东西。ES6则是将promise进行了统一，提供了原生的promise对象。 2 基本用法12345678var promise = new Promise(function(resolve, reject) &amp;#123;    setTimeout(func">
+<meta property="og:updated_time" content="2017-08-10T08:20:25.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Promise入门">
+<meta name="twitter:description" content="1 什么是Promisepromise是一种异步编程的解决方案，因为正常写回调很不直观，嵌套多了之后简直令人崩溃，所以有了promise这个东西。ES6则是将promise进行了统一，提供了原生的promise对象。 2 基本用法12345678var promise = new Promise(function(resolve, reject) &amp;#123;    setTimeout(func">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/07/26/Promise入门/"/>
+
+
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T5H3VG9');</script>
+<!-- End Google Tag Manager -->
+
+
+  <title>Promise入门 | 李续铖的博客</title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?dfd4aecbdbeac6bd0bd7853e67cd1dbd";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">李续铖的博客</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T5H3VG9"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2016/07/26/Promise入门/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="李续铖">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/lxchead.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李续铖的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Promise入门</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-07-26T00:00:00+08:00">
+                2016-07-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="1-什么是Promise"><a href="#1-什么是Promise" class="headerlink" title="1 什么是Promise"></a>1 什么是Promise</h2><p><code>promise</code>是一种异步编程的解决方案，因为正常写回调很不直观，嵌套多了之后简直令人崩溃，所以有了promise这个东西。ES6则是将promise进行了统一，提供了原生的promise对象。</p>
+<h2 id="2-基本用法"><a href="#2-基本用法" class="headerlink" title="2 基本用法"></a>2 基本用法</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">var promise = new Promise(function(resolve, reject) &#123;</div><div class="line">    setTimeout(function() &#123;</div><div class="line">        resolve(&apos;ok&apos;);</div><div class="line">    &#125;, 3000);</div><div class="line">&#125;);</div><div class="line">promise.then(function(value)&#123;</div><div class="line">  console.log(value);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h2 id="3-接口"><a href="#3-接口" class="headerlink" title="3 接口"></a>3 接口</h2><h4 id="3-1-then"><a href="#3-1-then" class="headerlink" title="3.1 then()"></a>3.1 then()</h4><p><strong>then()</strong> 的作用是为Promise对象增加回调函数，第一个参数是Resolced状态的回调函数，第二个参数可选，是Rejected状态的回调函数，<strong>then()</strong> 返回的是一个新的Promise对象，所以后面还可以继续写then();<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">var getPromise = function(num)&#123;</div><div class="line">  return new Promise(function(resolve, reject) &#123;</div><div class="line">      setTimeout(function() &#123;</div><div class="line">          resolve(num);</div><div class="line">      &#125;, 3000);</div><div class="line">  &#125;);</div><div class="line">&#125;</div><div class="line">getPromise(1).then(function(value)&#123;</div><div class="line">  console.log(value);</div><div class="line">  return getPromise(2)</div><div class="line">&#125;).then(function(value)&#123;</div><div class="line">  console.log(value);</div><div class="line">&#125;)</div></pre></td></tr></table></figure></p>
+<p>输出结果是</p>
+<blockquote>
+<p>1</p>
+<p>2</p>
+<h4 id="3-2-catch"><a href="#3-2-catch" class="headerlink" title="3.2 catch()"></a>3.2 catch()</h4><p><strong>catch()</strong> 方法和 <strong>then(null,rejection)</strong> 方法是等价的，都是指定promise对象发生错误时的回调函数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">var promise = new Promise(function(resolve, reject) &#123;</div><div class="line">  throw new Error(&apos;test&apos;);</div><div class="line">&#125;);</div><div class="line">promise.catch(function(error) &#123;</div><div class="line">  console.log(error);</div><div class="line">&#125;);</div><div class="line">// Error: test</div></pre></td></tr></table></figure></p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var promise = new Promise(function(resolve, reject) &#123;</div><div class="line">  reject(new Error(&apos;test&apos;));</div><div class="line">&#125;);</div><div class="line">promise.catch(function(error) &#123;</div><div class="line">  console.log(error);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>上面两种写法是等价的。</p>
+<blockquote>
+<p>==需要注意的是如果Promise对象的状态已经变成Resolved那么再抛出错误是无效的==。</p>
+</blockquote>
+<h4 id="3-3-all"><a href="#3-3-all" class="headerlink" title="3.3 all()"></a>3.3 all()</h4><p><strong>Promise.all()</strong> 方法用于将多个Promise实例包装成一个新的Promise实例。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">var p = Promise.all([p1, p2, p3]);</div></pre></td></tr></table></figure></p>
+<p><strong>all()</strong>   方法的参数是数组或者是具有Iterator的对象且每个成员的返回值都是Promise实例。<br> all方法的最终状态可以参考 <strong>与</strong>。</p>
+<ul>
+<li>只有每个成员的状态都变成  <strong>fulfilled</strong> ， <strong>p</strong> 的状态才会变成 <strong>fulfilled</strong>;</li>
+<li>而成员的状态有一个变成 <strong>rejected</strong> ，<strong>p</strong> 的状态就会变成 <strong>rejected</strong>;</li>
+</ul>
+<h4 id="3-4-race"><a href="#3-4-race" class="headerlink" title="3.4 race()"></a>3.4 race()</h4><p><strong>race()</strong> 方法同样是将多个Promise实例包装成一个新的Promise实例。<br>与 <strong>all()</strong> 不同的是，他的成员中有一个状态改变，那么新的Promise状态就会跟着改变<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">var p = Promise.race([</div><div class="line">  fetch(&apos;...&apos;),</div><div class="line">  new Promise(function (resolve, reject) &#123;</div><div class="line">    setTimeout(() =&gt; reject(new Error(&apos;request timeout&apos;)), 5000)</div><div class="line">  &#125;)</div><div class="line">])</div><div class="line">p.then(response =&gt; console.log(response))</div><div class="line">p.catch(error =&gt; console.log(error))</div></pre></td></tr></table></figure></p>
+<p>看上面的例子，如果5s后fetch没有返回结果，那么后面的第二个Promise成员就会改变状态为 <strong>rejected</strong> ，那么p的状态就变成了 <strong>rejected</strong> ,然后就会触发catch的回调函数。</p>
+<h4 id="3-5-resolved"><a href="#3-5-resolved" class="headerlink" title="3.5 resolved()"></a>3.5 resolved()</h4><p><strong>resolved()</strong> 的作用是将现有的对象转换成Promise对象。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Promise.resolve(&apos;foo&apos;)</div><div class="line">// 等价于</div><div class="line">new Promise(resolve =&gt; resolve(&apos;foo&apos;))</div></pre></td></tr></table></figure></p>
+<p>参数分为4种情况：</p>
+<ol>
+<li>参数是一个Promise对象，那么这时候就会原封不动地返回这个对象</li>
+<li>一个thenable对象（带有then方法的对象）<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var thenable = &#123;</div><div class="line">  then: function(resolve, reject) &#123;</div><div class="line">    resolve();</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>resolve方法会将这个对象转换为新的Promise 对象并且立即执行then方法</p>
+<ol>
+<li><p>参数不是then方法的对象，或者根本不是对象，则resolved的方法返回一个新的promise对象，状态为Resolved</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var p = Promise.resolve(&apos;Hello&apos;);</div><div class="line"></div><div class="line">p.then(function (s)&#123;</div><div class="line">  console.log(s)</div><div class="line">&#125;);</div><div class="line">// Hello</div></pre></td></tr></table></figure>
+</li>
+<li><p>参数为空：直接返回一个Resolved状态的Promise对象。</p>
+</li>
+</ol>
+<h4 id="3-6-reject"><a href="#3-6-reject" class="headerlink" title="3.6 reject()"></a>3.6 reject()</h4><p>reject()方法也会返回一个新的Promise实例，该实例的状态为rejected。它的参数用法与Promise.resolve方法完全一致。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">var p = Promise.reject(&apos;出错了&apos;);</div><div class="line">// 等同于</div><div class="line">var p = new Promise((resolve, reject) =&gt; reject(&apos;出错了&apos;))</div><div class="line"></div><div class="line">p.then(null, function (s)&#123;</div><div class="line">  console.log(s)</div><div class="line">&#125;);</div><div class="line">// 出错了</div></pre></td></tr></table></figure></p>
+<h4 id="3-7-done"><a href="#3-7-done" class="headerlink" title="3.7 done()"></a>3.7 done()</h4><p>如果回调链的最后一个方法发生错误，那么就无法捕捉，所以提供了done（）方法，放在回调链最后，捕捉最后可能出现的错误。</p>
+<h4 id="3-8-finally"><a href="#3-8-finally" class="headerlink" title="3.8 finally"></a>3.8 finally</h4><p>finally方法用于指定不管Promise对象最后状态如何，都会执行的操作。它与done方法的最大区别，它接受一个普通的回调函数作为参数，该函数不管怎样都必须执行。</p>
+<h2 id="4-Promise使用案例（实现fs-unlink方法）"><a href="#4-Promise使用案例（实现fs-unlink方法）" class="headerlink" title="4 Promise使用案例（实现fs.unlink方法）"></a>4 Promise使用案例（实现fs.unlink方法）</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">// unlink(path).then()</div><div class="line">var unlink = (path) =&gt; &#123;</div><div class="line">    return new Promise((resolve, reject) =&gt; &#123;</div><div class="line">        fs.unlink(path, function(err) &#123;</div><div class="line">            if (err) &#123;</div><div class="line">                reject(err);</div><div class="line">            &#125; else &#123;</div><div class="line">                resolve()</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">    &#125;)</div><div class="line">&#125;</div><div class="line">var unlinkAll = (pathList) =&gt; &#123;</div><div class="line">    var promiseList = [];</div><div class="line">    for (var path of pathList) &#123;</div><div class="line">        promiseList.push(unlink(path));</div><div class="line">    &#125;</div><div class="line">    return Promise.All(promiseList);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JavaScript/" rel="tag"># JavaScript</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/07/26/Promise简单实现/" rel="next" title="Promise简单实现">
+                <i class="fa fa-chevron-left"></i> Promise简单实现
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2016/07/27/co入门/" rel="prev" title="co入门">
+                co入门 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8yODE2Mi80NzM1"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/lxchead.jpeg"
+               alt="李续铖" />
+          <p class="site-author-name" itemprop="name">李续铖</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">20</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/lixucheng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://weibo.com/3868834235" target="_blank" title="微博">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  微博
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="http://www.zhihu.com/people/li-xu-cheng-57" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-什么是Promise"><span class="nav-number">1.</span> <span class="nav-text">1 什么是Promise</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-基本用法"><span class="nav-number">2.</span> <span class="nav-text">2 基本用法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-接口"><span class="nav-number">3.</span> <span class="nav-text">3 接口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-then"><span class="nav-number">3.0.1.</span> <span class="nav-text">3.1 then()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-catch"><span class="nav-number">3.0.2.</span> <span class="nav-text">3.2 catch()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-3-all"><span class="nav-number">3.0.3.</span> <span class="nav-text">3.3 all()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-4-race"><span class="nav-number">3.0.4.</span> <span class="nav-text">3.4 race()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-5-resolved"><span class="nav-number">3.0.5.</span> <span class="nav-text">3.5 resolved()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-6-reject"><span class="nav-number">3.0.6.</span> <span class="nav-text">3.6 reject()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-7-done"><span class="nav-number">3.0.7.</span> <span class="nav-text">3.7 done()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-8-finally"><span class="nav-number">3.0.8.</span> <span class="nav-text">3.8 finally</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-Promise使用案例（实现fs-unlink方法）"><span class="nav-number">4.</span> <span class="nav-text">4 Promise使用案例（实现fs.unlink方法）</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">李续铖</span>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+  
+  <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.1"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
