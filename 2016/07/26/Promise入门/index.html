@@ -100,7 +100,7 @@
 <meta property="og:url" content="http://yoursite.com/2016/07/26/Promise入门/index.html">
 <meta property="og:site_name" content="李续铖的博客">
 <meta property="og:description" content="1 什么是Promisepromise是一种异步编程的解决方案，因为正常写回调很不直观，嵌套多了之后简直令人崩溃，所以有了promise这个东西。ES6则是将promise进行了统一，提供了原生的promise对象。 2 基本用法12345678var promise = new Promise(function(resolve, reject) &amp;#123;    setTimeout(func">
-<meta property="og:updated_time" content="2017-08-10T08:20:25.000Z">
+<meta property="og:updated_time" content="2017-08-19T11:42:44.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Promise入门">
 <meta name="twitter:description" content="1 什么是Promisepromise是一种异步编程的解决方案，因为正常写回调很不直观，嵌套多了之后简直令人崩溃，所以有了promise这个东西。ES6则是将promise进行了统一，提供了原生的promise对象。 2 基本用法12345678var promise = new Promise(function(resolve, reject) &amp;#123;    setTimeout(func">
@@ -368,8 +368,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <blockquote>
 <p>1</p>
 <p>2</p>
-<h4 id="3-2-catch"><a href="#3-2-catch" class="headerlink" title="3.2 catch()"></a>3.2 catch()</h4><p><strong>catch()</strong> 方法和 <strong>then(null,rejection)</strong> 方法是等价的，都是指定promise对象发生错误时的回调函数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">var promise = new Promise(function(resolve, reject) &#123;</div><div class="line">  throw new Error(&apos;test&apos;);</div><div class="line">&#125;);</div><div class="line">promise.catch(function(error) &#123;</div><div class="line">  console.log(error);</div><div class="line">&#125;);</div><div class="line">// Error: test</div></pre></td></tr></table></figure></p>
 </blockquote>
+<h4 id="3-2-catch"><a href="#3-2-catch" class="headerlink" title="3.2 catch()"></a>3.2 catch()</h4><p><strong>catch()</strong> 方法和 <strong>then(null,rejection)</strong> 方法是等价的，都是指定promise对象发生错误时的回调函数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">var promise = new Promise(function(resolve, reject) &#123;</div><div class="line">  throw new Error(&apos;test&apos;);</div><div class="line">&#125;);</div><div class="line">promise.catch(function(error) &#123;</div><div class="line">  console.log(error);</div><div class="line">&#125;);</div><div class="line">// Error: test</div></pre></td></tr></table></figure></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var promise = new Promise(function(resolve, reject) &#123;</div><div class="line">  reject(new Error(&apos;test&apos;));</div><div class="line">&#125;);</div><div class="line">promise.catch(function(error) &#123;</div><div class="line">  console.log(error);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
 <p>上面两种写法是等价的。</p>
 <blockquote>
@@ -387,11 +387,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <p>参数分为4种情况：</p>
 <ol>
 <li>参数是一个Promise对象，那么这时候就会原封不动地返回这个对象</li>
-<li>一个thenable对象（带有then方法的对象）<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var thenable = &#123;</div><div class="line">  then: function(resolve, reject) &#123;</div><div class="line">    resolve();</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-</li>
-</ol>
+<li><p>一个thenable对象（带有then方法的对象）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var thenable = &#123;</div><div class="line">  then: function(resolve, reject) &#123;</div><div class="line">    resolve();</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
 <p>resolve方法会将这个对象转换为新的Promise 对象并且立即执行then方法</p>
-<ol>
+</li>
 <li><p>参数不是then方法的对象，或者根本不是对象，则resolved的方法返回一个新的promise对象，状态为Resolved</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var p = Promise.resolve(&apos;Hello&apos;);</div><div class="line"></div><div class="line">p.then(function (s)&#123;</div><div class="line">  console.log(s)</div><div class="line">&#125;);</div><div class="line">// Hello</div></pre></td></tr></table></figure>
 </li>

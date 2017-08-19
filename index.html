@@ -294,150 +294,6 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/30/graphQL入门基础（二）/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="李续铖">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/lxchead.jpeg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="李续铖的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/07/30/graphQL入门基础（二）/" itemprop="url">graphQL入门基础（二）</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-30T00:00:00+08:00">
-                2017-07-30
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/后端/" itemprop="url" rel="index">
-                    <span itemprop="name">后端</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <blockquote>
-<p>前面介绍了如何搭建一个简单的GrqphQl服务，那么下面说一些其他的，这次的数据并不会直接拿到，而是需要服务端再去获取，更符合实际情况。</p>
-</blockquote>
-<h2 id="1-类型定义"><a href="#1-类型定义" class="headerlink" title="1. 类型定义"></a>1. 类型定义</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">const GQPoi = new GraphQLObjectType(&#123;</div><div class="line">  name: &apos;poi&apos;,</div><div class="line">  fields: &#123;</div><div class="line">    id: &#123;</div><div class="line">      type: GraphQLInt,</div><div class="line">      resolve: e =&gt; e.id</div><div class="line">    &#125;,</div><div class="line">    poiName: &#123;</div><div class="line">      type: GraphQLString,</div><div class="line">      resolve: e =&gt; e.pointName</div><div class="line">    &#125;,</div><div class="line">    address: &#123;</div><div class="line">      type: GraphQLString</div><div class="line">    &#125;</div><div class="line">  &#125;,</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<h2 id="2-设置查询入口"><a href="#2-设置查询入口" class="headerlink" title="2. 设置查询入口"></a>2. 设置查询入口</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">const Query = new GraphQLObjectType(&#123;</div><div class="line">  name: &apos;Query&apos;,</div><div class="line">  fields: () =&gt; (&#123;</div><div class="line">    pois: &#123;</div><div class="line">      type: new GraphQLList(GQPoi),</div><div class="line">      description: &apos;店铺列表&apos;,</div><div class="line">      resolve: async () =&gt; &#123;</div><div class="line">        return await getPois();</div><div class="line">      &#125;</div><div class="line">    &#125;,</div><div class="line">    poi: &#123;</div><div class="line">      type: GQPoi,</div><div class="line">      description: &apos;店铺查询&apos;,</div><div class="line">      args: &#123;</div><div class="line">        id: &#123;</div><div class="line">          type: GraphQLInt</div><div class="line">        &#125;</div><div class="line">      &#125;,</div><div class="line">      resolve: async (source, args, ctx, info) =&gt; &#123;</div><div class="line">        console.log(args);</div><div class="line">        const id = args.id;</div><div class="line">        const pois = await getPois();</div><div class="line">        const poi = pois.filter(e =&gt; e.id === id );</div><div class="line">        return poi[0];</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;)</div><div class="line">&#125;);</div><div class="line"></div><div class="line">export default new GraphQLSchema(&#123;</div><div class="line">  query: Query,</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
-<p>在Query中添加了两个字段，pois是用来获取店铺列表，poi是用来查询某一个门店的信息，和之前不一样的是门店列表需要异步获取。poi还需要一个查询的id参数。</p>
-<h2 id="3-查询"><a href="#3-查询" class="headerlink" title="3. 查询"></a>3. 查询</h2><p>先来个简单的查询<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">query&#123;</div><div class="line">  pois &#123;</div><div class="line">    id </div><div class="line">    poiName</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>下面使用poi来查询某一个门店的信息</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">query&#123;</div><div class="line">  poi(id: 111) &#123;</div><div class="line">    poiName</div><div class="line">    poiId</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>获取到的结果是<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;data&quot;: &#123;</div><div class="line">    &quot;poi&quot;: &#123;</div><div class="line">      &quot;poiName&quot;: &quot;肯德基&quot;,</div><div class="line">      &quot;id&quot;: 111</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>可以发现GraphQL的查询是非常灵活的</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/30/graphQL入门基础（一）/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -602,7 +458,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/18/使用Docker部署nodeJS+MongoDB应用/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/30/graphQL入门基础（二）/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="李续铖">
@@ -621,7 +477,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/07/18/使用Docker部署nodeJS+MongoDB应用/" itemprop="url">使用Docker部署nodeJS+MongoDB应用</a></h1>
+                <a class="post-title-link" href="/2017/07/30/graphQL入门基础（二）/" itemprop="url">graphQL入门基础（二）</a></h1>
         
 
         <div class="post-meta">
@@ -633,8 +489,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-18T00:00:00+08:00">
-                2017-07-18
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-30T00:00:00+08:00">
+                2017-07-30
               </time>
             
 
@@ -656,8 +512,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/运维/" itemprop="url" rel="index">
-                    <span itemprop="name">运维</span>
+                  <a href="/categories/后端/" itemprop="url" rel="index">
+                    <span itemprop="name">后端</span>
                   </a>
                 </span>
 
@@ -693,27 +549,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         
           
             <blockquote>
-<p>需要提前安装node，mongo镜像</p>
+<p>前面介绍了如何搭建一个简单的GrqphQl服务，那么下面说一些其他的，这次的数据并不会直接拿到，而是需要服务端再去获取，更符合实际情况。</p>
 </blockquote>
-<h3 id="1-构建node应用"><a href="#1-构建node应用" class="headerlink" title="1. 构建node应用"></a>1. 构建node应用</h3><p>在node应用根目录下新建Dockerfile文件，内容如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">FROM node</div><div class="line"></div><div class="line"># 创建工作目录</div><div class="line">RUN mkdir /app</div><div class="line">WORKDIR /app</div><div class="line"></div><div class="line"># 复制项目文件</div><div class="line">COPY . /app</div><div class="line"></div><div class="line"># 声明暴露端口</div><div class="line">EXPOSE 8000</div><div class="line"></div><div class="line"># 安装包</div><div class="line">RUN [ &quot;rm&quot;, &quot;-rf&quot;, &quot;node_modules&quot;]</div><div class="line">RUN [ &quot;npm&quot;, &quot;install&quot;]</div><div class="line"></div><div class="line"># 启动应用</div><div class="line">CMD [ &quot;npm&quot;, &quot;run&quot;, &quot;s&quot;]</div></pre></td></tr></table></figure></p>
-<p>修改node应用连接数据库方式<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">// mongoDB下面会介绍</div><div class="line">mongoose.connect(&apos;mongodb://mongoDB/lp-platform&apos;);</div></pre></td></tr></table></figure></p>
-<p>开始构建</p>
-<blockquote>
-<p>$ docker build -t learn-app:v1 .</p>
-</blockquote>
-<h3 id="2-启动mongoDB容器"><a href="#2-启动mongoDB容器" class="headerlink" title="2. 启动mongoDB容器"></a>2. 启动mongoDB容器</h3><blockquote>
-<p>$ docker run -it –name mongodb mongo</p>
-</blockquote>
-<p> &nbsp;后台运行 </p>
-<blockquote>
-<p>$ docker run -d –name mongodb mongo</p>
-</blockquote>
-<h3 id="3-启动node应用容器"><a href="#3-启动node应用容器" class="headerlink" title="3. 启动node应用容器"></a>3. 启动node应用容器</h3><blockquote>
-<p>$ docker run -it -p <strong>8000:8000</strong> –name learn-app –link mongodb:<strong>mongoDB</strong>  learn-app:v1</p>
-</blockquote>
-<p><strong>需要注意的是这里的 link 命令的作用是连接node容器和mango数据库容器，这样在node应用中就可以使用mongoDB来连接数据库</strong></p>
-<h3 id="4-完成"><a href="#4-完成" class="headerlink" title="4. 完成"></a>4. 完成</h3><p>容器启动完成之后就可以在浏览器中访问了，这里记录一下我遇见的一个问题：</p>
-<p>容器启动完成之后，通过curl命令是可以正常访问node<br>APP，但是在浏览器中并不能访问，一直加载中，尝试了很多方法之后发现重启浏览器可以解决。。。。。。。。。</p>
+<h2 id="1-类型定义"><a href="#1-类型定义" class="headerlink" title="1. 类型定义"></a>1. 类型定义</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">const GQPoi = new GraphQLObjectType(&#123;</div><div class="line">  name: &apos;poi&apos;,</div><div class="line">  fields: &#123;</div><div class="line">    id: &#123;</div><div class="line">      type: GraphQLInt,</div><div class="line">      resolve: e =&gt; e.id</div><div class="line">    &#125;,</div><div class="line">    poiName: &#123;</div><div class="line">      type: GraphQLString,</div><div class="line">      resolve: e =&gt; e.pointName</div><div class="line">    &#125;,</div><div class="line">    address: &#123;</div><div class="line">      type: GraphQLString</div><div class="line">    &#125;</div><div class="line">  &#125;,</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<h2 id="2-设置查询入口"><a href="#2-设置查询入口" class="headerlink" title="2. 设置查询入口"></a>2. 设置查询入口</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">const Query = new GraphQLObjectType(&#123;</div><div class="line">  name: &apos;Query&apos;,</div><div class="line">  fields: () =&gt; (&#123;</div><div class="line">    pois: &#123;</div><div class="line">      type: new GraphQLList(GQPoi),</div><div class="line">      description: &apos;店铺列表&apos;,</div><div class="line">      resolve: async () =&gt; &#123;</div><div class="line">        return await getPois();</div><div class="line">      &#125;</div><div class="line">    &#125;,</div><div class="line">    poi: &#123;</div><div class="line">      type: GQPoi,</div><div class="line">      description: &apos;店铺查询&apos;,</div><div class="line">      args: &#123;</div><div class="line">        id: &#123;</div><div class="line">          type: GraphQLInt</div><div class="line">        &#125;</div><div class="line">      &#125;,</div><div class="line">      resolve: async (source, args, ctx, info) =&gt; &#123;</div><div class="line">        console.log(args);</div><div class="line">        const id = args.id;</div><div class="line">        const pois = await getPois();</div><div class="line">        const poi = pois.filter(e =&gt; e.id === id );</div><div class="line">        return poi[0];</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;)</div><div class="line">&#125;);</div><div class="line"></div><div class="line">export default new GraphQLSchema(&#123;</div><div class="line">  query: Query,</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>在Query中添加了两个字段，pois是用来获取店铺列表，poi是用来查询某一个门店的信息，和之前不一样的是门店列表需要异步获取。poi还需要一个查询的id参数。</p>
+<h2 id="3-查询"><a href="#3-查询" class="headerlink" title="3. 查询"></a>3. 查询</h2><p>先来个简单的查询<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">query&#123;</div><div class="line">  pois &#123;</div><div class="line">    id </div><div class="line">    poiName</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>下面使用poi来查询某一个门店的信息</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">query&#123;</div><div class="line">  poi(id: 111) &#123;</div><div class="line">    poiName</div><div class="line">    poiId</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>获取到的结果是<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&#123;</div><div class="line">  &quot;data&quot;: &#123;</div><div class="line">    &quot;poi&quot;: &#123;</div><div class="line">      &quot;poiName&quot;: &quot;肯德基&quot;,</div><div class="line">      &quot;id&quot;: 111</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>可以发现GraphQL的查询是非常灵活的</p>
 
           
         
@@ -848,6 +693,161 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         
           
             <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">// 下载镜像</div><div class="line">docker pull $name</div><div class="line"></div><div class="line">// 查看所有镜像</div><div class="line">docker images</div><div class="line"></div><div class="line">// 查看所有容器</div><div class="line">docker ps -a</div><div class="line"></div><div class="line">// 删除容器</div><div class="line">docker rm $name</div><div class="line"></div><div class="line">// 删除所有容器</div><div class="line">docker rm $(docker ps -a -q)</div><div class="line"></div><div class="line">// 构建</div><div class="line">docker build -t $name:tag .</div><div class="line"></div><div class="line">// 启动</div><div class="line">docker run -it -p 8000:8000 --name learn-app --link mongodb:mongoDB  learn-app:v3</div><div class="line"></div><div class="line">// 停止容器</div><div class="line">docker stop $name</div><div class="line"></div><div class="line">// 删除虚悬镜像</div><div class="line">docker rmi $(docker images -q -f dangling=true)</div></pre></td></tr></table></figure>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/18/使用Docker部署nodeJS+MongoDB应用/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="李续铖">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/lxchead.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李续铖的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/07/18/使用Docker部署nodeJS+MongoDB应用/" itemprop="url">使用Docker部署nodeJS+MongoDB应用</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-18T00:00:00+08:00">
+                2017-07-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/运维/" itemprop="url" rel="index">
+                    <span itemprop="name">运维</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <blockquote>
+<p>需要提前安装node，mongo镜像</p>
+</blockquote>
+<h3 id="1-构建node应用"><a href="#1-构建node应用" class="headerlink" title="1. 构建node应用"></a>1. 构建node应用</h3><p>在node应用根目录下新建Dockerfile文件，内容如下<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">FROM node</div><div class="line"></div><div class="line"># 创建工作目录</div><div class="line">RUN mkdir /app</div><div class="line">WORKDIR /app</div><div class="line"></div><div class="line"># 复制项目文件</div><div class="line">COPY . /app</div><div class="line"></div><div class="line"># 声明暴露端口</div><div class="line">EXPOSE 8000</div><div class="line"></div><div class="line"># 安装包</div><div class="line">RUN [ &quot;rm&quot;, &quot;-rf&quot;, &quot;node_modules&quot;]</div><div class="line">RUN [ &quot;npm&quot;, &quot;install&quot;]</div><div class="line"></div><div class="line"># 启动应用</div><div class="line">CMD [ &quot;npm&quot;, &quot;run&quot;, &quot;s&quot;]</div></pre></td></tr></table></figure></p>
+<p>修改node应用连接数据库方式<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">// mongoDB下面会介绍</div><div class="line">mongoose.connect(&apos;mongodb://mongoDB/lp-platform&apos;);</div></pre></td></tr></table></figure></p>
+<p>开始构建</p>
+<blockquote>
+<p>$ docker build -t learn-app:v1 .</p>
+</blockquote>
+<h3 id="2-启动mongoDB容器"><a href="#2-启动mongoDB容器" class="headerlink" title="2. 启动mongoDB容器"></a>2. 启动mongoDB容器</h3><blockquote>
+<p>$ docker run -it –name mongodb mongo</p>
+</blockquote>
+<p> &nbsp;后台运行 </p>
+<blockquote>
+<p>$ docker run -d –name mongodb mongo</p>
+</blockquote>
+<h3 id="3-启动node应用容器"><a href="#3-启动node应用容器" class="headerlink" title="3. 启动node应用容器"></a>3. 启动node应用容器</h3><blockquote>
+<p>$ docker run -it -p <strong>8000:8000</strong> –name learn-app –link mongodb:<strong>mongoDB</strong>  learn-app:v1</p>
+</blockquote>
+<p><strong>需要注意的是这里的 link 命令的作用是连接node容器和mango数据库容器，这样在node应用中就可以使用mongoDB来连接数据库</strong></p>
+<h3 id="4-完成"><a href="#4-完成" class="headerlink" title="4. 完成"></a>4. 完成</h3><p>容器启动完成之后就可以在浏览器中访问了，这里记录一下我遇见的一个问题：</p>
+<p>容器启动完成之后，通过curl命令是可以正常访问node<br>APP，但是在浏览器中并不能访问，一直加载中，尝试了很多方法之后发现重启浏览器可以解决。。。。。。。。。</p>
+
           
         
       
@@ -1348,8 +1348,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <blockquote>
 <p>1</p>
 <p>2</p>
-<h4 id="3-2-catch"><a href="#3-2-catch" class="headerlink" title="3.2 catch()"></a>3.2 catch()</h4><p><strong>catch()</strong> 方法和 <strong>then(null,rejection)</strong> 方法是等价的，都是指定promise对象发生错误时的回调函数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">var promise = new Promise(function(resolve, reject) &#123;</div><div class="line">  throw new Error(&apos;test&apos;);</div><div class="line">&#125;);</div><div class="line">promise.catch(function(error) &#123;</div><div class="line">  console.log(error);</div><div class="line">&#125;);</div><div class="line">// Error: test</div></pre></td></tr></table></figure></p>
 </blockquote>
+<h4 id="3-2-catch"><a href="#3-2-catch" class="headerlink" title="3.2 catch()"></a>3.2 catch()</h4><p><strong>catch()</strong> 方法和 <strong>then(null,rejection)</strong> 方法是等价的，都是指定promise对象发生错误时的回调函数。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">var promise = new Promise(function(resolve, reject) &#123;</div><div class="line">  throw new Error(&apos;test&apos;);</div><div class="line">&#125;);</div><div class="line">promise.catch(function(error) &#123;</div><div class="line">  console.log(error);</div><div class="line">&#125;);</div><div class="line">// Error: test</div></pre></td></tr></table></figure></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var promise = new Promise(function(resolve, reject) &#123;</div><div class="line">  reject(new Error(&apos;test&apos;));</div><div class="line">&#125;);</div><div class="line">promise.catch(function(error) &#123;</div><div class="line">  console.log(error);</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
 <p>上面两种写法是等价的。</p>
 <blockquote>
@@ -1367,11 +1367,10 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 <p>参数分为4种情况：</p>
 <ol>
 <li>参数是一个Promise对象，那么这时候就会原封不动地返回这个对象</li>
-<li>一个thenable对象（带有then方法的对象）<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var thenable = &#123;</div><div class="line">  then: function(resolve, reject) &#123;</div><div class="line">    resolve();</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-</li>
-</ol>
+<li><p>一个thenable对象（带有then方法的对象）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">var thenable = &#123;</div><div class="line">  then: function(resolve, reject) &#123;</div><div class="line">    resolve();</div><div class="line">  &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
 <p>resolve方法会将这个对象转换为新的Promise 对象并且立即执行then方法</p>
-<ol>
+</li>
 <li><p>参数不是then方法的对象，或者根本不是对象，则resolved的方法返回一个新的promise对象，状态为Resolved</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">var p = Promise.resolve(&apos;Hello&apos;);</div><div class="line"></div><div class="line">p.then(function (s)&#123;</div><div class="line">  console.log(s)</div><div class="line">&#125;);</div><div class="line">// Hello</div></pre></td></tr></table></figure>
 </li>
