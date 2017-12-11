@@ -1424,6 +1424,118 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="https://www.lixucheng.cn/2016/07/26/Promise简单实现/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="李续铖">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/lxchead.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="李续铖的博客">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2016/07/26/Promise简单实现/" itemprop="url">Promise简单实现</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-07-26T00:00:00+08:00">
+                2016-07-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">function Promise(fn) &#123;</div><div class="line"></div><div class="line">    var doneList = [];</div><div class="line">    var failList = [];</div><div class="line">    var state = &apos;pending&apos;;</div><div class="line">    var value;</div><div class="line">    //注册回调函数 为什么要加入状态机制呢，因为如果当前的fn已经执行完成了，再去用</div><div class="line">    //then绑定回调，就不会执行了，所以加入状态之后，即使已经运行完成也会继续执行回调函数</div><div class="line">    this.then = (done, fail) =&gt; &#123;</div><div class="line">            switch (state) &#123;</div><div class="line">                case &apos;pending&apos;:</div><div class="line">                    doneList.push(done);</div><div class="line">                    failList.push(fail);</div><div class="line">                    return this;</div><div class="line">                    break;</div><div class="line">                case &apos;fulfilled&apos;:</div><div class="line">                    done(value);</div><div class="line">                    return this;</div><div class="line">                    break;</div><div class="line">                case &apos;rejected&apos;:</div><div class="line">                    fail(value);</div><div class="line">                    return this;</div><div class="line">                    break;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    //更改对象状态为‘resolved’并执行成功回调</div><div class="line">    function resolve(newValue) &#123;</div><div class="line">        value = newValue;</div><div class="line">        state = &apos;fulfilled&apos;;</div><div class="line">        //使用setTimeout的原因是如果fn不是异步的，在fn瞬间运行完成，resolve也会立刻运行，</div><div class="line">        //但是这时候doneList还是空的，所以我们要等待then添加完成，使用setTiemout强行将</div><div class="line">        //函数的运行放到第一次循环之后运行</div><div class="line">        setTimeout(function() &#123;</div><div class="line">            doneList.forEach(done =&gt; &#123;</div><div class="line">                done(newValue);</div><div class="line">            &#125;)</div><div class="line">        &#125;, 0);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //更改对象状态为‘rejected’并执行失败回调</div><div class="line">    function reject(err) &#123;</div><div class="line">        value = err;</div><div class="line">        state = &apos;rejected&apos;;</div><div class="line">        setTimeout(function() &#123;</div><div class="line">            failList.forEach(fail =&gt; &#123;</div><div class="line">                fail(err);</div><div class="line">            &#125;)</div><div class="line">        &#125;, 0);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    fn(resolve, reject);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">var p = new Promise((resolve, reject) =&gt; &#123;</div><div class="line">    setTimeout(function()&#123;</div><div class="line">      console.log(&apos;done&apos;);</div><div class="line">      //resolve(&apos;messsage&apos;);</div><div class="line">      reject(&apos;fail&apos;);</div><div class="line">    &#125;,3000)</div><div class="line">&#125;)</div><div class="line">p.then(function(message)&#123;</div><div class="line">  console.log(&apos;then1:&apos;,message);</div><div class="line">&#125;,function(err)&#123;</div><div class="line">  console.log(&apos;then1err:&apos;,err);</div><div class="line">&#125;).then(function(message)&#123;</div><div class="line">  console.log(&apos;then2:&apos;,message);</div><div class="line">&#125;,function(err)&#123;</div><div class="line">  console.log(&apos;then2err:&apos;,err);</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="https://www.lixucheng.cn/2016/07/26/Promise入门/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1566,118 +1678,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="https://www.lixucheng.cn/2016/07/26/Promise简单实现/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="李续铖">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/lxchead.jpeg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="李续铖的博客">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2016/07/26/Promise简单实现/" itemprop="url">Promise简单实现</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-07-26T00:00:00+08:00">
-                2016-07-26
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line"></div><div class="line">function Promise(fn) &#123;</div><div class="line"></div><div class="line">    var doneList = [];</div><div class="line">    var failList = [];</div><div class="line">    var state = &apos;pending&apos;;</div><div class="line">    var value;</div><div class="line">    //注册回调函数 为什么要加入状态机制呢，因为如果当前的fn已经执行完成了，再去用</div><div class="line">    //then绑定回调，就不会执行了，所以加入状态之后，即使已经运行完成也会继续执行回调函数</div><div class="line">    this.then = (done, fail) =&gt; &#123;</div><div class="line">            switch (state) &#123;</div><div class="line">                case &apos;pending&apos;:</div><div class="line">                    doneList.push(done);</div><div class="line">                    failList.push(fail);</div><div class="line">                    return this;</div><div class="line">                    break;</div><div class="line">                case &apos;fulfilled&apos;:</div><div class="line">                    done(value);</div><div class="line">                    return this;</div><div class="line">                    break;</div><div class="line">                case &apos;rejected&apos;:</div><div class="line">                    fail(value);</div><div class="line">                    return this;</div><div class="line">                    break;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">    //更改对象状态为‘resolved’并执行成功回调</div><div class="line">    function resolve(newValue) &#123;</div><div class="line">        value = newValue;</div><div class="line">        state = &apos;fulfilled&apos;;</div><div class="line">        //使用setTimeout的原因是如果fn不是异步的，在fn瞬间运行完成，resolve也会立刻运行，</div><div class="line">        //但是这时候doneList还是空的，所以我们要等待then添加完成，使用setTiemout强行将</div><div class="line">        //函数的运行放到第一次循环之后运行</div><div class="line">        setTimeout(function() &#123;</div><div class="line">            doneList.forEach(done =&gt; &#123;</div><div class="line">                done(newValue);</div><div class="line">            &#125;)</div><div class="line">        &#125;, 0);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    //更改对象状态为‘rejected’并执行失败回调</div><div class="line">    function reject(err) &#123;</div><div class="line">        value = err;</div><div class="line">        state = &apos;rejected&apos;;</div><div class="line">        setTimeout(function() &#123;</div><div class="line">            failList.forEach(fail =&gt; &#123;</div><div class="line">                fail(err);</div><div class="line">            &#125;)</div><div class="line">        &#125;, 0);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    fn(resolve, reject);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">var p = new Promise((resolve, reject) =&gt; &#123;</div><div class="line">    setTimeout(function()&#123;</div><div class="line">      console.log(&apos;done&apos;);</div><div class="line">      //resolve(&apos;messsage&apos;);</div><div class="line">      reject(&apos;fail&apos;);</div><div class="line">    &#125;,3000)</div><div class="line">&#125;)</div><div class="line">p.then(function(message)&#123;</div><div class="line">  console.log(&apos;then1:&apos;,message);</div><div class="line">&#125;,function(err)&#123;</div><div class="line">  console.log(&apos;then1err:&apos;,err);</div><div class="line">&#125;).then(function(message)&#123;</div><div class="line">  console.log(&apos;then2:&apos;,message);</div><div class="line">&#125;,function(err)&#123;</div><div class="line">  console.log(&apos;then2err:&apos;,err);</div><div class="line">&#125;)</div></pre></td></tr></table></figure>
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -1772,7 +1772,7 @@
               </span>
             
               <span class="links-of-author-item">
-                <a href="http://weibo.com/3868834235" target="_blank" title="微博">
+                <a href="https://weibo.com/3868834235" target="_blank" title="微博">
                   
                     <i class="fa fa-fw fa-globe"></i>
                   
@@ -1781,7 +1781,7 @@
               </span>
             
               <span class="links-of-author-item">
-                <a href="http://www.zhihu.com/people/li-xu-cheng-57" target="_blank" title="知乎">
+                <a href="https://www.zhihu.com/people/li-xu-cheng-57" target="_blank" title="知乎">
                   
                     <i class="fa fa-fw fa-globe"></i>
                   
